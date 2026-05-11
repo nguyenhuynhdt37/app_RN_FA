@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-be-vietnam), ui-sans-serif, system-ui, sans-serif;
+  
+  --color-brand-primary: oklch(0.69 0.19 162.31); /* Emerald 500 equivalent */
+  --color-brand-secondary: oklch(0.75 0.15 190);
+  --color-brand-accent: oklch(0.85 0.2 120);
+  
+  --color-surface-sunken: #050505;
+  --color-surface-base: #09090b;
+  --color-surface-raised: #18181b;
+  
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  
+  --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.3);
+  --shadow-glass: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+:root {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #18181b;
+  --card-foreground: #fafafa;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #10b981;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-glass);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+}

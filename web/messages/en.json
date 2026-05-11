@@ -1,0 +1,28 @@
+{
+  "Home": {
+    "badge": "NeuralEarn Management",
+    "title": "Smart Data Management",
+    "titleAccent": "Data",
+    "description": "Premium management system for the NeuralEarn ecosystem. Monitor sessions, manage users, and configure system settings in real-time.",
+    "getStarted": "Get Started",
+    "viewDocs": "View Docs",
+    "preview": "Dashboard Preview Coming Soon"
+  },
+  "Auth": {
+    "login": {
+      "title": "Welcome Back",
+      "description": "Enter your email or phone number to continue",
+      "otpDescription": "OTP code has been sent to {identifier}",
+      "placeholder": "Email or Phone number",
+      "otpPlaceholder": "Enter 6-digit OTP",
+      "continue": "Continue",
+      "confirm": "Confirm",
+      "processing": "Processing...",
+      "changeIdentifier": "Change contact information",
+      "terms": "By continuing, you agree to our {terms}"
+    }
+  },
+  "Common": {
+    "terms": "Terms of Service"
+  }
+}

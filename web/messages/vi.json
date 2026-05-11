@@ -1,0 +1,28 @@
+{
+  "Home": {
+    "badge": "NeuralEarn Management",
+    "title": "Quản lý Dữ liệu Thông minh",
+    "titleAccent": "Dữ liệu",
+    "description": "Hệ thống quản trị tối ưu cho hệ sinh thái NeuralEarn. Theo dõi phiên làm việc, quản lý người dùng và cấu hình hệ thống thời gian thực.",
+    "getStarted": "Bắt đầu ngay",
+    "viewDocs": "Xem tài liệu",
+    "preview": "Giao diện Dashboard sắp ra mắt"
+  },
+  "Auth": {
+    "login": {
+      "title": "Chào mừng trở lại",
+      "description": "Nhập email hoặc số điện thoại để tiếp tục",
+      "otpDescription": "Mã OTP đã được gửi đến {identifier}",
+      "placeholder": "Email hoặc Số điện thoại",
+      "otpPlaceholder": "Nhập mã OTP 6 số",
+      "continue": "Tiếp tục",
+      "confirm": "Xác nhận",
+      "processing": "Đang xử lý...",
+      "changeIdentifier": "Thay đổi thông tin liên lạc",
+      "terms": "Bằng cách tiếp tục, bạn đồng ý với {terms}"
+    }
+  },
+  "Common": {
+    "terms": "Điều khoản dịch vụ"
+  }
+}

@@ -1,0 +1,1 @@
+python -m sqlacodegen postgresql+psycopg://postgres:password@127.0.0.1:5432/mobility_app --schema public --outfile app/models/database.py

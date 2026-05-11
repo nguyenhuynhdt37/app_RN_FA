@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mã xác thực của bạn ✨</title>
+  <style>
+    body { margin: 0; padding: 0; background: #F8FAFC; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .container { max-width: 500px; margin: 40px auto; background: #ffffff; border-radius: 32px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+    .header { background: linear-gradient(135deg, #10B981 0%, #34D399 100%); padding: 48px 40px; text-align: center; }
+    .header-emoji { font-size: 54px; margin-bottom: 16px; display: block; }
+    .header h1 { margin: 0; color: #ffffff; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+    
+    .content { padding: 40px; text-align: center; }
+    .greeting { font-size: 18px; color: #1E293B; font-weight: 600; margin-bottom: 12px; }
+    .message { font-size: 15px; color: #64748B; line-height: 1.6; margin-bottom: 32px; }
+    
+    .otp-card { background: #F0FDF4; border-radius: 24px; padding: 32px 20px; margin: 0 auto 32px; border: 2px solid #DCFCE7; }
+    .otp-label { font-size: 13px; font-weight: 700; color: #059669; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+    .otp-code { font-size: 48px; font-weight: 800; color: #065F46; letter-spacing: 8px; margin: 0; font-family: 'Courier New', monospace; }
+    
+    .timer { display: inline-flex; items-center; background: #FEF3C7; color: #92400E; padding: 8px 16px; border-radius: 99px; font-size: 13px; font-weight: 600; margin-top: 16px; }
+    
+    .warning { font-size: 13px; color: #94A3B8; background: #F8FAFC; padding: 16px; border-radius: 16px; margin-top: 40px; }
+    .footer { padding: 0 40px 40px; text-align: center; }
+    .footer p { margin: 0; font-size: 12px; color: #CBD5E1; }
+    .footer a { color: #10B981; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span class="header-emoji">🤖</span>
+      <h1>{{ app_name }}</h1>
+    </div>
+    
+    <div class="content">
+      <p class="greeting">Chào mừng bạn mới! 👋</p>
+      <p class="message">
+        {% if purpose == "register" %}
+          Rất vui vì bạn đã tham gia cùng <b>{{ app_name }}</b>. Hãy dùng mã bên dưới để hoàn tất việc đăng ký nhé!
+        {% elif purpose == "login" %}
+          Đây là mã xác thực để bạn "đăng nhập" vào thế giới tri thức của <b>{{ app_name }}</b>:
+        {% elif purpose == "reset_password" %}
+          Bạn cần đặt lại mật khẩu? Đừng lo, mã bảo mật của bạn ở ngay đây:
+        {% else %}
+          Bạn ơi, đây là mã xác thực yêu cầu từ hệ thống:
+        {% endif %}
+      </p>
+      
+      <div class="otp-card">
+        <p class="otp-label">Mã OTP của bạn</p>
+        <p class="otp-code">{{ otp_code }}</p>
+        <div class="timer">⏱ Hiệu lực trong {{ expire_minutes }} phút</div>
+      </div>
+      
+      <div class="warning">
+        🤫 Suỵt! Đừng chia sẻ mã này cho ai khác nhé, để tài khoản của bạn luôn được an toàn.
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>© {{ year }} {{ app_name }} • Made with ❤️</p>
+      <p style="margin-top: 8px;">
+        <a href="{{ support_url }}">Hỗ trợ</a> &nbsp;•&nbsp; 
+        <a href="{{ privacy_url }}">Bảo mật</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

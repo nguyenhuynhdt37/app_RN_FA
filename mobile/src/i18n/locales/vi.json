@@ -1,0 +1,166 @@
+{
+  "auth": {
+    "welcome": "Chào mừng bạn",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "phone_placeholder": "Số điện thoại",
+    "otp_placeholder": "Nhập mã OTP",
+    "continue": "Tiếp tục",
+    "or": "Hoặc",
+    "google_login": "Đăng nhập với Google",
+    "github_login": "Đăng nhập với GitHub",
+    "email_login": "Đăng nhập Email",
+    "email_label": "Địa chỉ Email",
+    "email_placeholder": "example@gmail.com",
+    "use_email": "Sử dụng Email để đăng nhập",
+    "use_phone": "Sử dụng Số điện thoại để đăng nhập",
+    "phone_msg": "Sử dụng số điện thoại để đăng nhập vào tài khoản của bạn.",
+    "email_msg": "Nhập email để tiếp tục hành trình khám phá tri thức.",
+    "invalid_phone": "Số điện thoại không hợp lệ",
+    "invalid_email": "Email không hợp lệ",
+    "enter_value": "Vui lòng nhập giá trị",
+    "verify_title": "Xác thực tài khoản",
+    "verify_msg": "Mã 6 chữ số đã được gửi đến",
+    "not_received": "Chưa nhận được mã?",
+    "resend_after": "Gửi lại sau",
+    "resend_now": "Gửi lại ngay",
+    "otp_invalid": "Mã OTP không hợp lệ hoặc đã hết hạn",
+    "otp_expires_in": "Mã hết hạn sau",
+    "onboarding": {
+      "badge": "NỀN TẢNG HỌC TẬP AI",
+      "title": "Học tập thông minh hơn cùng AI",
+      "description": "Nền tảng học tập cá nhân hóa, giúp bạn đạt được mục tiêu nhanh chóng và hiệu quả.",
+      "start": "Bắt đầu hành trình",
+      "try_dev": "Dùng thử ngay (Dev)"
+    },
+    "profile": {
+      "step_indicator": "Bước {{current}} trên {{total}}",
+      "basic_info": {
+        "title": "Bắt đầu nào! 👋",
+        "description": "Thiết lập những thông tin cơ bản nhất.",
+        "full_name": "Họ và tên",
+        "full_name_placeholder": "Nguyễn Văn A",
+        "username": "Username",
+        "username_placeholder": "huynh_dev",
+        "bio": "Tiểu sử ngắn",
+        "bio_placeholder": "Mô tả bản thân một chút...",
+        "missing_info": "Vui lòng điền tên và username."
+      },
+      "education": {
+        "title": "Bạn học gì? 🎓",
+        "description": "Điều này giúp AI cá nhân hóa lộ trình cho bạn.",
+        "specialization": "Chuyên ngành / Khoa",
+        "level": "Trình độ hiện tại",
+        "missing_specialization": "Vui lòng chọn chuyên ngành và trình độ.",
+        "levels": {
+          "freshman_sophomore": "Sinh viên năm 1-2",
+          "junior_senior": "Sinh viên năm 3-4",
+          "graduated": "Đã tốt nghiệp",
+          "working": "Người đi làm"
+        }
+      },
+      "skills": {
+        "title": "Kỹ năng & Sở thích ⚡️",
+        "description": "NeuralEarn sẽ tìm những tài liệu phù hợp nhất.",
+        "skills_label": "Kỹ năng bạn đã có",
+        "interests_label": "Chủ đề bạn quan tâm"
+      },
+      "goals": {
+        "title": "Mục tiêu của bạn 🎯",
+        "description": "Hãy đặt mục tiêu để chúng tôi cùng bạn chinh phục.",
+        "goal_label": "Mục tiêu lớn nhất của bạn là gì?",
+        "goal_placeholder": "VD: Trở thành chuyên gia AI năm 2026...",
+        "daily_time": "Thời gian học mỗi ngày",
+        "minutes": "Phút / Ngày",
+        "style": "Phong cách học yêu thích",
+        "goal_too_short": "Vui lòng nhập ít nhất 10 ký tự cho mục tiêu.",
+        "styles": {
+          "video": "Xem Video",
+          "reading": "Đọc tài liệu",
+          "practice": "Thực hành"
+        }
+      },
+      "nav": {
+        "next": "Tiếp theo",
+        "back": "Quay lại",
+        "finish": "Hoàn tất & Bắt đầu"
+      },
+      "logout_confirm": {
+        "title": "Đăng xuất?",
+        "description": "Bạn có chắc chắn muốn thoát? Các thông tin chưa lưu sẽ bị mất.",
+        "confirm": "Đăng xuất"
+      }
+    }
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Có lỗi xảy ra",
+    "success": "Thành công",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "retry": "Thử lại",
+    "select_level": "Chọn trình độ"
+  },
+  "errors": {
+    "OTP_INVALID": "Mã xác thực không chính xác. Vui lòng kiểm tra lại.",
+    "OTP_EXPIRED": "Mã xác thực đã hết hạn. Vui lòng gửi lại mã mới.",
+    "SEND_OTP_FAILED": "Không thể gửi mã OTP. Vui lòng thử lại sau.",
+    "USER_NOT_FOUND": "Không tìm thấy người dùng trong hệ thống.",
+    "USERNAME_TAKEN": "Tên người dùng này đã tồn tại. Vui lòng chọn tên khác.",
+    "ACCOUNT_BLOCKED": "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ hỗ trợ.",
+    "UNAUTHORIZED": "Phiên làm việc hết hạn. Vui lòng đăng nhập lại.",
+    "INTERNAL_ERROR": "Đã có lỗi hệ thống xảy ra. Vui lòng thử lại sau.",
+    "NETWORK_ERROR": "Mất kết nối máy chủ",
+    "NETWORK_DESC": "Chúng tôi không thể kết nối tới hệ thống. Vui lòng kiểm tra kết nối mạng của bạn và thử lại.",
+    "REFRESH_TOKEN_INVALID": "Phiên làm việc không hợp lệ. Vui lòng đăng nhập lại.",
+    "FULL_NAME_TOO_SHORT": "Họ và tên phải có ít nhất 8 ký tự.",
+    "USERNAME_TOO_SHORT": "Username phải có ít nhất 8 ký tự.",
+    "USERNAME_INVALID_FORMAT": "Username chỉ được chứa chữ cái, số và dấu gạch dưới.",
+    "USERNAME_STARTS_WITH_NUMBER": "Username không được bắt đầu bằng số."
+  },
+  "profile_screen": {
+    "title": "Hồ sơ cá nhân",
+    "edit_profile": "Chỉnh sửa hồ sơ",
+    "stats": {
+      "points": "Điểm tích lũy",
+      "streak": "Chuỗi ngày",
+      "courses": "Khóa học",
+      "next_level": "Còn {{xp}} XP để lên cấp"
+    },
+    "sections": {
+      "about": "Giới thiệu",
+      "expertise": "Chuyên môn & Kỹ năng",
+      "interests": "Lĩnh vực quan tâm",
+      "account": "Tài khoản",
+      "preferences": "Tùy chỉnh",
+      "support": "Hỗ trợ",
+      "settings": "Cài đặt & Bảo mật"
+    },
+    "notifications": "Thông báo",
+    "language": "Ngôn ngữ",
+    "about_app": "Về ứng dụng",
+    "fields": {
+      "full_name": "Họ và tên",
+      "username": "Tên người dùng",
+      "bio": "Tiểu sử",
+      "bio_placeholder": "Hãy viết gì đó về bạn...",
+      "learning_goals": "Mục tiêu học tập",
+      "daily_goal": "Mục tiêu mỗi ngày",
+      "learning_style": "Phong cách học",
+      "avatar": "Ảnh đại diện",
+      "full_name_placeholder": "Họ và tên của bạn",
+      "username_placeholder": "biệt_danh",
+      "bio_input_placeholder": "Kể về bản thân bạn một chút...",
+      "goals_placeholder": "Bạn muốn đạt được điều gì?",
+      "basic_info_title": "Thông tin cơ bản",
+      "goals_section_title": "Giới thiệu & Mục tiêu",
+      "tap_to_change_avatar": "Nhấn vào ảnh để thay đổi"
+    },
+    "actions": {
+      "save": "Lưu thay đổi",
+      "upload_photo": "Tải ảnh lên",
+      "change_photo": "Đổi ảnh đại diện"
+    },
+    "help": "Trợ giúp & Hỗ trợ"
+  }
+}

@@ -1,0 +1,43 @@
+# ===== Core FastAPI Stack =====
+fastapi>=0.115.6
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+starlette>=0.37.2
+
+# ===== Pydantic & Settings =====
+pydantic>=2.8
+pydantic-settings>=2.7
+
+# ===== Database & ORM =====
+SQLAlchemy[asyncio]>=2.0.35
+asyncpg>=0.30
+alembic>=1.13
+greenlet>=3.0.3
+
+# ===== Redis Cache =====
+redis[asyncio]>=5.0
+
+# ===== Auth & Security =====
+bcrypt>=4.2
+pyjwt[crypto]>=2.9
+python-slugify>=8.0
+email-validator>=2.3
+authlib>=1.3                  # OAuth2 / OIDC (Google id_token verify)
+
+# ===== Email =====
+fastapi-mail>=1.5.7
+jinja2>=3.1
+
+# ===== SMS =====
+twilio>=9.0
+httpx>=0.27           # async HTTP (Twilio REST + external APIs)
+
+# ===== Pagination =====
+fastapi-pagination[sqlalchemy]>=0.12
+
+# ===== Logging =====
+loguru>=0.7
+
+# ===== Dev Tools =====
+black>=25.0
+ruff>=0.6

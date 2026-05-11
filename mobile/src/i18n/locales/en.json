@@ -1,0 +1,162 @@
+{
+  "auth": {
+    "welcome": "Welcome",
+    "login": "Login",
+    "register": "Register",
+    "phone_placeholder": "Phone number",
+    "otp_placeholder": "Enter OTP code",
+    "continue": "Continue",
+    "or": "OR",
+    "google_login": "Continue with Google",
+    "github_login": "Continue with GitHub",
+    "email_login": "Email Login",
+    "email_label": "Email Address",
+    "email_placeholder": "example@gmail.com",
+    "use_email": "Use Email to Login",
+    "use_phone": "Use Phone Number to Login",
+    "phone_msg": "Use your phone number to sign in to your account.",
+    "email_msg": "Enter your email to continue your knowledge journey.",
+    "invalid_phone": "Invalid phone number",
+    "invalid_email": "Invalid email address",
+    "enter_value": "Please enter a value",
+    "verify_title": "Account Verification",
+    "verify_msg": "A 6-digit code has been sent to",
+    "not_received": "Didn't receive the code?",
+    "resend_after": "Resend in",
+    "resend_now": "Resend now",
+    "otp_invalid": "Invalid or expired OTP code",
+    "otp_expires_in": "Code expires in",
+    "onboarding": {
+      "badge": "AI LEARNING PLATFORM",
+      "title": "Learn Smarter with AI",
+      "description": "Personalized learning platform helping you achieve your goals faster and more effectively.",
+      "start": "Start Journey",
+      "try_dev": "Try Now (Dev)"
+    },
+    "profile": {
+      "step_indicator": "Step {{current}} of {{total}}",
+      "basic_info": {
+        "title": "Let's Get Started! 👋",
+        "description": "Set up your basic information.",
+        "full_name": "Full Name",
+        "full_name_placeholder": "John Doe",
+        "username": "Username",
+        "username_placeholder": "john_dev",
+        "bio": "Short Bio",
+        "bio_placeholder": "Tell us a bit about yourself...",
+        "missing_info": "Please enter your name and username."
+      },
+      "education": {
+        "title": "What are you studying? 🎓",
+        "description": "This helps AI personalize your path.",
+        "specialization": "Specialization / Department",
+        "level": "Current Level",
+        "missing_specialization": "Please select your specialization and level.",
+        "levels": {
+          "freshman_sophomore": "Freshman - Sophomore",
+          "junior_senior": "Junior - Senior",
+          "graduated": "Graduated",
+          "working": "Working Professional"
+        }
+      },
+      "skills": {
+        "title": "Skills & Interests ⚡️",
+        "description": "NeuralEarn will find the best materials for you.",
+        "skills_label": "Skills you already have",
+        "interests_label": "Topics you care about"
+      },
+      "goals": {
+        "title": "Your Goals 🎯",
+        "description": "Set goals for us to conquer together.",
+        "goal_label": "What is your biggest goal?",
+        "goal_placeholder": "e.g., Become an AI expert by 2026...",
+        "daily_time": "Daily Study Time",
+        "minutes": "Mins / Day",
+        "style": "Preferred Learning Style",
+        "goal_too_short": "Please enter at least 10 characters for your goal.",
+        "styles": {
+          "video": "Watch Videos",
+          "reading": "Read Materials",
+          "practice": "Practice"
+        }
+      },
+      "nav": {
+        "next": "Next",
+        "back": "Back",
+        "finish": "Finish & Start"
+      },
+      "logout_confirm": {
+        "title": "Logout?",
+        "description": "Are you sure you want to exit? Unsaved progress will be lost.",
+        "confirm": "Logout"
+      }
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "select_level": "Select Level"
+  },
+  "errors": {
+    "OTP_INVALID": "Incorrect verification code. Please check again.",
+    "OTP_EXPIRED": "Verification code has expired. Please resend a new code.",
+    "SEND_OTP_FAILED": "Could not send OTP. Please try again later.",
+    "USER_NOT_FOUND": "User not found in the system.",
+    "USERNAME_TAKEN": "This username is already taken. Please choose another one.",
+    "ACCOUNT_BLOCKED": "Your account has been blocked. Please contact support.",
+    "UNAUTHORIZED": "Session expired. Please log in again.",
+    "INTERNAL_ERROR": "A system error occurred. Please try again later.",
+    "REFRESH_TOKEN_INVALID": "Invalid session. Please log in again.",
+    "FULL_NAME_TOO_SHORT": "Full name must be at least 8 characters long.",
+    "USERNAME_TOO_SHORT": "Username must be at least 8 characters long.",
+    "USERNAME_INVALID_FORMAT": "Username can only contain letters, numbers, and underscores.",
+    "USERNAME_STARTS_WITH_NUMBER": "Username cannot start with a number."
+  },
+  "profile_screen": {
+    "title": "Personal Profile",
+    "edit_profile": "Edit Profile",
+    "stats": {
+      "points": "Earned Points",
+      "streak": "Days Streak",
+      "courses": "Courses"
+    },
+    "sections": {
+      "about": "About",
+      "expertise": "Expertise & Skills",
+      "interests": "Interests",
+      "account": "Account",
+      "preferences": "Preferences",
+      "support": "Support",
+      "settings": "Settings & Security"
+    },
+    "notifications": "Notifications",
+    "language": "Language",
+    "about_app": "About App",
+    "help": "Help & Support",
+    "fields": {
+      "full_name": "Full Name",
+      "username": "Username",
+      "bio": "Bio",
+      "bio_placeholder": "Tell us a bit about yourself...",
+      "learning_goals": "Learning Goals",
+      "daily_goal": "Daily Goal",
+      "learning_style": "Learning Style",
+      "avatar": "Profile Picture",
+      "full_name_placeholder": "Your full name",
+      "username_placeholder": "username",
+      "bio_input_placeholder": "Tell us about yourself...",
+      "goals_placeholder": "What do you want to achieve?",
+      "basic_info_title": "Basic Information",
+      "goals_section_title": "About & Goals",
+      "tap_to_change_avatar": "Tap to change photo"
+    },
+    "actions": {
+      "save": "Save Changes",
+      "upload_photo": "Upload Photo",
+      "change_photo": "Change Photo"
+    }
+  }
+}
