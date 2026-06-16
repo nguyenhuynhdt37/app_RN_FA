@@ -1,32 +1,34 @@
 import React from 'react'
-import { View, Pressable, StyleSheet } from 'react-native'
+import { View, Pressable } from 'react-native'
 import { Text } from '@/components/ui/Text'
-import { Feather, Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
 import * as Haptics from 'expo-haptics'
 import { useTranslation } from 'react-i18next'
 import { useColorScheme } from 'nativewind'
 import { MotiView } from 'moti'
+import { User, Shield, Bell, Languages, HelpCircle, Info, ChevronRight } from 'lucide-react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 
 const SECTIONS = [
   {
     title: 'account',
     items: [
-      { icon: 'person-outline', color: '#3b82f6', key: 'edit_profile', action: 'edit' },
-      { icon: 'shield-checkmark-outline', color: '#10b981', key: 'sections.settings', action: 'security' },
+      { Icon: User, key: 'edit_profile', action: 'edit' },
+      { Icon: Shield, key: 'sections.settings', action: 'security' },
     ]
   },
   {
     title: 'preferences',
     items: [
-      { icon: 'notifications-outline', color: '#f59e0b', key: 'notifications', action: 'notifications' },
-      { icon: 'language-outline', color: '#8b5cf6', key: 'language', action: 'language' },
+      { Icon: Bell, key: 'notifications', action: 'notifications' },
+      { Icon: Languages, key: 'language', action: 'language' },
     ]
   },
   {
     title: 'support',
     items: [
-      { icon: 'help-circle-outline', color: '#f43f5e', key: 'help', action: 'help' },
-      { icon: 'information-circle-outline', color: '#64748b', key: 'about_app', action: 'about' },
+      { Icon: HelpCircle, key: 'help', action: 'help' },
+      { Icon: Info, key: 'about_app', action: 'about' },
     ]
   }
 ]
@@ -34,41 +36,70 @@ const SECTIONS = [
 export function ProfileActions({ onEdit }: { onEdit: () => void }) {
   const { t } = useTranslation()
   const { colorScheme } = useColorScheme()
+  const router = useRouter()
   const isDark = colorScheme === 'dark'
 
-  const handlers: Record<string, () => void> = { edit: onEdit }
+  const handlers: Record<string, () => void> = { 
+    edit: onEdit,
+    security: () => router.push('/settings'),
+    language: () => router.push('/(app)/language' as any)
+  }
 
   return (
-    <View style={styles.container}>
+    <View className="px-6 mb-[100px]">
       {SECTIONS.map((section, sIdx) => (
         <MotiView
           key={section.title}
-          from={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 500 + sIdx * 100, type: 'timing' }}
-          style={styles.section}
+          from={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 500 + sIdx * 100, type: 'spring' }}
+          className="mb-10"
         >
-          <Text style={{ color: '#10b981' }} className="text-xs font-black uppercase tracking-[0.2em] mb-4 ml-1">
-            {t(`profile_screen.sections.${section.title}`)}
-          </Text>
+          <View className="flex-row items-center mb-6 ml-3">
+            <View className="w-1 h-3 bg-emerald-500 rounded-full mr-3" />
+            <Text className="text-zinc-400 dark:text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em]">
+              {t(`profile_screen.sections.${section.title}`)}
+            </Text>
+          </View>
           
-          <View style={[styles.card, { backgroundColor: isDark ? '#18181b' : '#fff' }]}>
+          <View className={`rounded-[48px] overflow-hidden border ${isDark ? 'bg-zinc-900/40 border-white/5' : 'bg-white border-zinc-100'}`}>
             {section.items.map((item, iIdx) => (
               <React.Fragment key={item.key}>
                 <Pressable
-                  onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); handlers[item.action]?.() }}
-                  style={styles.row}
+                  onPress={() => { 
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); 
+                    if (handlers[item.action]) {
+                      handlers[item.action]();
+                    }
+                  }}
                 >
-                  <View style={[styles.iconBox, { backgroundColor: item.color + '10' }]}>
-                    <Ionicons name={item.icon as any} size={20} color={item.color} />
-                  </View>
-                  <Text style={{ color: isDark ? '#fff' : '#09090b', flex: 1 }} className="text-lg font-bold tracking-tight">
-                    {t(`profile_screen.${item.key}`)}
-                  </Text>
-                  <Ionicons name="chevron-forward" size={18} color={isDark ? '#3f3f46' : '#d4d4d8'} />
+                  {({ pressed }) => (
+                    <MotiView
+                      animate={{
+                        scale: pressed ? 0.98 : 1,
+                        backgroundColor: pressed 
+                          ? (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)') 
+                          : 'transparent'
+                      }}
+                      className="flex-row items-center gap-5 p-6"
+                    >
+                      <View className={`w-12 h-12 rounded-full items-center justify-center border ${isDark ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-emerald-50 bg-zinc-100/50 border-zinc-100'}`}>
+                        <item.Icon size={20} color="#10b981" strokeWidth={2.5} />
+                      </View>
+                      
+                      <Text className={`flex-1 text-base font-bold tracking-tight ${isDark ? 'text-zinc-200' : 'text-zinc-800'}`}>
+                        {t(`profile_screen.${item.key}`)}
+                      </Text>
+                      
+                      <View className={`w-8 h-8 rounded-full items-center justify-center ${isDark ? 'bg-white/5' : 'bg-zinc-50'}`}>
+                        <ChevronRight size={14} color={isDark ? '#52525b' : '#a1a1aa'} strokeWidth={3} />
+                      </View>
+                    </MotiView>
+                  )}
                 </Pressable>
+                
                 {iIdx < section.items.length - 1 && (
-                  <View style={[styles.divider, { backgroundColor: isDark ? '#27272a' : '#f4f4f5' }]} />
+                  <View className={`h-[1px] mx-8 ${isDark ? 'bg-white/5' : 'bg-zinc-50'}`} />
                 )}
               </React.Fragment>
             ))}
@@ -79,11 +110,5 @@ export function ProfileActions({ onEdit }: { onEdit: () => void }) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: { paddingHorizontal: 24, marginBottom: 50 },
-  section: { marginBottom: 30 },
-  card: { borderRadius: 36, overflow: 'hidden', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 10 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 16, padding: 18 },
-  iconBox: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  divider: { height: 1, marginHorizontal: 20 },
-})
+
+

@@ -73,6 +73,14 @@ class AuthenticateRequest(BaseModel):
     device_token: str | None = None                     # FCM/APNS push token
 
 
+class PasswordLoginRequest(BaseModel):
+    """Đăng nhập bằng email và mật khẩu (dùng cho Admin panel)."""
+    email: EmailStr
+    password: str = Field(..., min_length=6)
+    device_type: Literal["IOS", "ANDROID", "WEB"] = "WEB"
+    device_name: str | None = None
+
+
 # ─── Token ────────────────────────────────────────────────────────────────────
 
 class TokenResponse(BaseModel):
@@ -109,7 +117,7 @@ class ResetPasswordRequest(BaseModel):
 class UserSpecializationSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     specialization_id: uuid.UUID
-    level: str = Field(..., min_length=2, max_length=50)
+    level: str = Field(..., min_length=1, max_length=50)
     skill_ids: list[uuid.UUID] = []
 
 class SkillResponse(BaseModel):
@@ -126,19 +134,21 @@ class SpecializationResponse(BaseModel):
     level: str # the key
     level_label: str
     skills: list[SkillResponse] = []
+    skill_ids: list[uuid.UUID] = []
 
 
 class UpdateProfileRequest(BaseModel):
-    full_name: str = Field(..., min_length=2, max_length=100)
+    full_name: str = Field(..., min_length=1, max_length=100)
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr | None = None
     bio: str | None = None
-    specializations: list[UserSpecializationSchema] = Field(..., min_length=1)
-    learning_goals: str = Field(..., min_length=10)
+    specializations: list[UserSpecializationSchema] = Field(..., min_length=0)
+    learning_goals: str = Field("", max_length=1000)
     interest_ids: list[uuid.UUID] = []
     daily_goal_minutes: int = 30
     preferred_learning_style: str | None = None
     avatar_url: str | None = None
+    cover_url: str | None = None
     social_links: dict[str, str] = {}
     date_of_birth: date | None = None
     gender: str | None = None
@@ -147,11 +157,12 @@ class UpdateProfileRequest(BaseModel):
 class UserProfileSummaryResponse(BaseModel):
     full_name: str | None
     avatar_url: str | None
+    cover_url: str | None
     username: str | None
 
-    @field_validator("avatar_url", mode="after")
+    @field_validator("avatar_url", "cover_url", mode="after")
     @classmethod
-    def prefix_avatar_url(cls, v: str | None) -> str | None:
+    def prefix_image_url(cls, v: str | None) -> str | None:
         if v and not v.startswith(("http://", "https://")):
             from app.core.config import settings
             return f"{settings.BACKEND_URL.rstrip('/')}/{v.lstrip('/')}"
@@ -164,6 +175,18 @@ class AvatarUploadResponse(BaseModel):
     @field_validator("avatar_url", mode="after")
     @classmethod
     def prefix_avatar_url(cls, v: str) -> str:
+        if v and not v.startswith(("http://", "https://")):
+            from app.core.config import settings
+            return f"{settings.BACKEND_URL.rstrip('/')}/{v.lstrip('/')}"
+        return v
+
+
+class CoverUploadResponse(BaseModel):
+    cover_url: str
+
+    @field_validator("cover_url", mode="after")
+    @classmethod
+    def prefix_cover_url(cls, v: str) -> str:
         if v and not v.startswith(("http://", "https://")):
             from app.core.config import settings
             return f"{settings.BACKEND_URL.rstrip('/')}/{v.lstrip('/')}"
@@ -190,6 +213,7 @@ class UserPublicResponse(BaseModel):
     preferred_learning_style: str | None = None
     social_links: dict[str, str] = {}
     avatar_url: str | None = None
+    cover_url: str | None = None
     status: str
     is_verified: bool
     roles: list[str] = []
@@ -198,9 +222,9 @@ class UserPublicResponse(BaseModel):
     date_of_birth: date | None = None
     gender: str | None = None
 
-    @field_validator("avatar_url", mode="after")
+    @field_validator("avatar_url", "cover_url", mode="after")
     @classmethod
-    def prefix_avatar_url(cls, v: str | None) -> str | None:
+    def prefix_image_url(cls, v: str | None) -> str | None:
         if v and not v.startswith(("http://", "https://")):
             from app.core.config import settings
             return f"{settings.BACKEND_URL.rstrip('/')}/{v.lstrip('/')}"

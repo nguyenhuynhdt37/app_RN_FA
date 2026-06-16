@@ -48,13 +48,12 @@ class LocalStorage(BaseStorage):
             with file_path.open("wb") as buffer:
                 shutil.copyfileobj(file.file, buffer)
             
-            logger.info("storage.local_upload_success", path=str(file_path))
+            logger.info(f"File uploaded successfully: {file_path}")
             
-            # Trả về đường dẫn tương đối để lưu vào DB
-            # Ví dụ: /uploads/avatars/abc.png
+            # Return relative path: /uploads/avatars/xxx.jpg
             return f"{self.base_url}/{folder}/{unique_name}"
         except Exception as e:
-            logger.error("storage.local_upload_error", error=str(e))
+            logger.error(f"Upload error: {str(e)}")
             raise e
 
     async def delete(self, path: str) -> bool:
@@ -95,6 +94,13 @@ class StorageService:
             logger.error(f"Error in upload_avatar: {str(e)}", exc_info=True)
             raise
 
+    async def upload_cover(self, file: UploadFile) -> str:
+        try:
+            return await self.provider.upload(file, "covers")
+        except Exception as e:
+            logger.error(f"Error in upload_cover: {str(e)}", exc_info=True)
+            raise
+
     async def upload_thumbnail(self, file: UploadFile) -> str:
         try:
             return await self.provider.upload(file, "course_thumbnails")
@@ -115,3 +121,6 @@ class StorageService:
         except Exception as e:
             logger.error(f"Error in delete_file: {str(e)}", exc_info=True)
             return False
+
+
+storage_service = StorageService()

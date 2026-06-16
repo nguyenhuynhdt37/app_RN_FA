@@ -1,28 +1,263 @@
 {
-  "Home": {
-    "badge": "NeuralEarn Management",
-    "title": "Quản lý Dữ liệu Thông minh",
-    "titleAccent": "Dữ liệu",
-    "description": "Hệ thống quản trị tối ưu cho hệ sinh thái NeuralEarn. Theo dõi phiên làm việc, quản lý người dùng và cấu hình hệ thống thời gian thực.",
-    "getStarted": "Bắt đầu ngay",
-    "viewDocs": "Xem tài liệu",
-    "preview": "Giao diện Dashboard sắp ra mắt"
-  },
-  "Auth": {
-    "login": {
-      "title": "Chào mừng trở lại",
-      "description": "Nhập email hoặc số điện thoại để tiếp tục",
-      "otpDescription": "Mã OTP đã được gửi đến {identifier}",
-      "placeholder": "Email hoặc Số điện thoại",
-      "otpPlaceholder": "Nhập mã OTP 6 số",
-      "continue": "Tiếp tục",
-      "confirm": "Xác nhận",
-      "processing": "Đang xử lý...",
-      "changeIdentifier": "Thay đổi thông tin liên lạc",
-      "terms": "Bằng cách tiếp tục, bạn đồng ý với {terms}"
+  "Courses": {
+    "title": "Khám phá Kiến thức",
+    "titleHighlight": "Kiến thức",
+    "subtitle": "Học từ các chuyên gia hàng đầu và nâng tầm kỹ năng của bạn.",
+    "searchPlaceholder": "Tìm kiếm khóa học...",
+    "enrollCount": "{count} học viên",
+    "rating": "{count}",
+    "price": "Giá khóa học",
+    "free": "Miễn phí",
+    "loading": "Đang tải dữ liệu...",
+    "notFound": "Không tìm thấy khóa học nào",
+    "tryAgain": "Hãy thử tìm kiếm với từ khóa khác.",
+    "categories": {
+      "all": "Tất cả",
+      "programming": "Lập trình",
+      "design": "Thiết kế",
+      "marketing": "Marketing",
+      "business": "Kinh doanh"
     }
   },
-  "Common": {
-    "terms": "Điều khoản dịch vụ"
+  "Home": {
+    "title": "Học tập thông minh",
+    "subtitle": "Nền tảng học tập 2026",
+    "getStarted": "Bắt đầu ngay"
+  },
+  "Dashboard": {
+    "title": "Bảng điều khiển",
+    "revenue": "Doanh thu",
+    "students": "Học viên",
+    "courses": "Khóa học"
+  },
+  "Admin": {
+    "categories": {
+      "title": "Danh mục",
+      "subtitle": "{total} danh mục đang tổ chức {courses} khóa học",
+      "courseUnit": "khóa học",
+      "untitled": "Chưa đặt tên",
+      "noDescription": "Chưa có mô tả cho danh mục này.",
+      "unknown": "Chưa rõ",
+      "resultSummary": "{count} / {total} danh mục",
+      "enrollSummary": "{count} lượt ghi danh từ các danh mục",
+      "actions": {
+        "refresh": "Làm mới",
+        "retry": "Thử lại",
+        "clearFilters": "Xóa lọc",
+        "clearSearch": "Xóa tìm kiếm",
+        "create": "Tạo danh mục",
+        "edit": "Sửa tiếng Việt",
+        "delete": "Xóa"
+      },
+      "filters": {
+        "search": "Tìm danh mục, mô tả hoặc ID...",
+        "all": "Tất cả danh mục",
+        "withCourses": "Có khóa học",
+        "empty": "Chưa có khóa học"
+      },
+      "sort": {
+        "newest": "Mới nhất",
+        "updated": "Vừa cập nhật",
+        "mostCourses": "Nhiều khóa học nhất",
+        "nameAsc": "Tên A-Z",
+        "nameDesc": "Tên Z-A"
+      },
+      "view": {
+        "grid": "Xem dạng lưới",
+        "table": "Xem dạng bảng"
+      },
+      "stats": {
+        "total": "Tổng danh mục",
+        "active": "Đang dùng",
+        "courses": "Khóa học",
+        "empty": "Còn trống"
+      },
+      "card": {
+        "translations": "Bản dịch",
+        "updated": "Cập nhật"
+      },
+      "table": {
+        "category": "Danh mục",
+        "description": "Mô tả",
+        "courses": "Khóa học",
+        "translations": "Ngôn ngữ",
+        "updated": "Cập nhật",
+        "action": "Thao tác",
+        "noDescription": "Chưa có mô tả",
+        "unknown": "Chưa rõ"
+      },
+      "empty": {
+        "title": "Không tìm thấy danh mục",
+        "subtitle": "Thử đổi bộ lọc hoặc từ khóa tìm kiếm."
+      },
+      "errors": {
+        "loadFailed": "Không thể tải danh sách danh mục",
+        "CATEGORY_CREATE_FAILED": "Không thể tạo danh mục. Vui lòng thử lại.",
+        "CATEGORY_TRANSLATION_FAILED": "Không thể tạo bản dịch tiếng Anh. Kiểm tra cấu hình Gemini hoặc thử lại.",
+        "CATEGORY_ALREADY_EXISTS": "Danh mục tiếng Việt này đã tồn tại.",
+        "CATEGORY_NOT_FOUND": "Không tìm thấy danh mục này.",
+        "CATEGORY_DETAIL_FAILED": "Không thể tải chi tiết danh mục.",
+        "CATEGORY_UPDATE_FAILED": "Không thể cập nhật danh mục.",
+        "CATEGORY_DELETE_FAILED": "Không thể xóa danh mục. Vui lòng thử lại.",
+        "CATEGORY_HAS_COURSES": "Không thể xóa danh mục đang liên kết với khóa học.",
+        "VALIDATION_ERROR": "Dữ liệu chưa hợp lệ.",
+        "UNAUTHORIZED": "Vui lòng đăng nhập lại.",
+        "FORBIDDEN": "Bạn không có quyền tạo danh mục."
+      },
+      "detail": {
+        "back": "Quay lại danh sách",
+        "translations": "Bản dịch danh mục",
+        "languages": "ngôn ngữ",
+        "autoTranslated": "AI tự dịch",
+        "manual": "Admin nhập",
+        "courses": "Khóa học trong danh mục",
+        "noCourses": "Danh mục này chưa có khóa học.",
+        "generatedAt": "Dữ liệu cập nhật",
+        "stats": {
+          "totalCourses": "Tổng khóa học",
+          "published": "Đã xuất bản",
+          "enrolls": "Ghi danh",
+          "revenue": "Doanh thu"
+        },
+        "courseMetrics": {
+          "enrolls": "Ghi danh",
+          "views": "Lượt xem",
+          "revenue": "Doanh thu"
+        }
+      },
+      "pagination": {
+        "previous": "Trang trước",
+        "next": "Trang sau",
+        "page": "Trang {page} / {total}"
+      },
+      "create": {
+        "title": "Tạo danh mục",
+        "subtitle": "Nhập nội dung tiếng Việt",
+        "close": "Đóng",
+        "nameLabel": "Tên danh mục",
+        "namePlaceholder": "Ví dụ: Tiếng Anh",
+        "descriptionLabel": "Mô tả nháp",
+        "descriptionPlaceholder": "Có thể để trống. AI sẽ viết hoặc chỉnh lại mô tả dựa trên tên danh mục.",
+        "cancel": "Hủy",
+        "submit": "Tạo mới",
+        "submitting": "Đang tạo",
+        "success": "Đã tạo danh mục"
+      },
+      "edit": {
+        "title": "Sửa danh mục",
+        "subtitle": "Chỉ sửa nội dung tiếng Việt",
+        "close": "Đóng",
+        "nameLabel": "Tên danh mục",
+        "namePlaceholder": "Ví dụ: Tiếng Anh",
+        "descriptionLabel": "Mô tả tiếng Việt",
+        "descriptionPlaceholder": "Nhập mô tả tiếng Việt. AI sẽ viết lại bản tiếng Anh nếu có thay đổi.",
+        "aiNote": "Khi lưu, backend sẽ dùng AI tạo lại nội dung tiếng Anh cho mobile.",
+        "cancel": "Hủy",
+        "submit": "Lưu thay đổi",
+        "submitting": "Đang lưu"
+      },
+      "delete": {
+        "title": "Xóa danh mục",
+        "subtitle": "Hành động này không thể hoàn tác",
+        "categoryLabel": "Danh mục sẽ xóa:",
+        "warning": "Bạn chỉ có thể xóa danh mục chưa liên kết với khóa học nào. Hành động này sẽ xóa cả bản dịch tiếng Anh.",
+        "close": "Đóng",
+        "cancel": "Hủy",
+        "proceed": "Xóa",
+        "confirm": "Xác nhận xóa",
+        "deleting": "Đang xóa",
+        "success": "Đã xóa danh mục"
+      }
+    },
+    "courses": {
+      "title": "Quản lý Khóa học",
+      "subtitle": "Thiết kế lộ trình học tập tối ưu cho người dùng.",
+      "courseUnit": "khóa học",
+      "untitled": "Chưa đặt tên",
+      "noDescription": "Chưa có mô tả.",
+      "unknown": "Chưa rõ",
+      "resultSummary": "{count} / {total} khóa học",
+      "actions": {
+        "refresh": "Làm mới",
+        "retry": "Thử lại",
+        "clearFilters": "Xóa lọc",
+        "clearSearch": "Xóa tìm kiếm",
+        "create": "Tạo khóa học mới",
+        "edit": "Sửa",
+        "delete": "Xóa"
+      },
+      "filters": {
+        "search": "Tìm kiếm tên, slug, tag...",
+        "all": "Tất cả",
+        "allLevels": "Tất cả cấp độ",
+        "allCategories": "Tất cả danh mục"
+      },
+      "sort": {
+        "newest": "Mới nhất",
+        "updated": "Vừa cập nhật",
+        "mostRevenue": "Doanh thu cao",
+        "mostViews": "Lượt xem",
+        "mostEnrolls": "Học viên",
+        "bestRating": "Đánh giá",
+        "nameAsc": "Tên A-Z",
+        "nameDesc": "Tên Z-A"
+      },
+      "view": {
+        "grid": "Xem dạng lưới",
+        "table": "Xem dạng bảng"
+      },
+      "stats": {
+        "total": "Tổng khóa học",
+        "active": "Đã đăng",
+        "courses": "Khóa học",
+        "empty": "Còn trống",
+        "published": "Đã đăng",
+        "draft": "Bản nháp"
+      },
+      "table": {
+        "course": "Khóa học",
+        "description": "Mô tả",
+        "courses": "Khóa học",
+        "category": "Danh mục",
+        "level": "Cấp độ",
+        "instructor": "Giảng viên",
+        "enrolls": "Học viên",
+        "revenue": "Doanh thu",
+        "status": "Trạng thái",
+        "updated": "Cập nhật",
+        "action": "Thao tác",
+        "noDescription": "Chưa có mô tả",
+        "unknown": "Chưa rõ"
+      },
+      "level": {
+        "BEGINNER": "Cơ bản",
+        "INTERMEDIATE": "Trung cấp",
+        "ADVANCED": "Nâng cao"
+      },
+      "status": {
+        "published": "Đã đăng",
+        "draft": "Bản nháp",
+        "pending": "Chờ duyệt",
+        "approved": "Đã duyệt",
+        "rejected": "Bị từ chối"
+      },
+      "empty": {
+        "title": "Không tìm thấy khóa học nào",
+        "subtitle": "Thử thay đổi bộ lọc hoặc tạo khóa học mới."
+      },
+      "errors": {
+        "loadFailed": "Không thể tải danh sách khóa học",
+        "COURSE_LIST_FAILED": "Không thể tải danh sách khóa học.",
+        "COURSE_STATS_FAILED": "Không thể tải thống kê khóa học.",
+        "COURSE_CREATE_FAILED": "Không thể tạo khóa học. Vui lòng thử lại.",
+        "COURSE_UPDATE_FAILED": "Không thể cập nhật khóa học.",
+        "COURSE_DELETE_FAILED": "Không thể xóa khóa học.",
+        "COURSE_NOT_FOUND": "Không tìm thấy khóa học này.",
+        "CATEGORY_LIST_FAILED": "Không thể tải danh sách danh mục.",
+        "VALIDATION_ERROR": "Dữ liệu chưa hợp lệ.",
+        "UNAUTHORIZED": "Vui lòng đăng nhập lại.",
+        "FORBIDDEN": "Bạn không có quyền thực hiện thao tác này."
+      }
+    }
   }
 }

@@ -10,7 +10,7 @@ from app.core.config import settings
 from app.db.base import Base
 
 # ─── Import all models so Alembic can auto-detect them ─────────────────────────
-from app.models import user  # noqa: F401  add new model imports here
+from app.models import *  # noqa: F401, F403
 
 # ─── Alembic Config ────────────────────────────────────────────────────────────
 config = context.config

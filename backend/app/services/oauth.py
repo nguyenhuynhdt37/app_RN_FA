@@ -399,8 +399,6 @@ class OAuthUpsertService:
         self._db.add(user)
         await self._db.flush()
 
-        # Gán role customer
-        await self._auth._assign_default_role(user.id, "customer")
         await self._db.commit()
         await self._db.refresh(user)
         return user

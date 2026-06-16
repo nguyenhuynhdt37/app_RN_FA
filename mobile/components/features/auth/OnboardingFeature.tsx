@@ -1,108 +1,129 @@
 import React, { useState, useEffect } from 'react'
-import { View, Image, Dimensions, StyleSheet, BackHandler } from 'react-native'
+import { View, Dimensions, BackHandler, Pressable, StyleSheet } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useTranslation } from 'react-i18next'
-import { Button, ThemeToggle, LanguageToggle } from '@/components/ui'
+import { MotiView } from 'moti'
+import { Audio } from 'expo-av'
+import * as Haptics from 'expo-haptics'
+import { Image } from 'expo-image' // Use expo-image for better GIF performance
+import { ThemeToggle, LanguageToggle } from '@/components/ui'
 import { Text } from '@/components/ui/Text'
 import { useAuthStore } from '@/src/stores/auth.store'
 import { useColorScheme } from 'nativewind'
 
 const { width, height } = Dimensions.get('window')
+const START_SOUND = 'https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3'
 
 export function OnboardingFeature() {
   const router = useRouter()
   const insets = useSafeAreaInsets()
-  const bypassLogin = useAuthStore(s => s.bypassLogin)
   const isAuthenticated = useAuthStore(s => s.isAuthenticated)
-  const [loading, setLoading] = useState(false)
   const { t } = useTranslation()
   const { colorScheme } = useColorScheme()
   const isDark = colorScheme === 'dark'
+  const [sound, setSound] = useState<Audio.Sound | null>(null)
 
-  // Handle Android Back Button
   useEffect(() => {
     const backAction = () => {
       if (!isAuthenticated) {
-        // Nếu chưa login mà ở onboarding thì thoát app luôn thay vì lỗi back
         BackHandler.exitApp()
         return true
       }
       return false
     }
-
     const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
     return () => backHandler.remove()
   }, [isAuthenticated])
 
-  const handleTestLogin = async () => {
-    setLoading(true)
-    await bypassLogin()
-    router.replace('/(app)')
+  useEffect(() => {
+    return sound ? () => { sound.unloadAsync() } : undefined
+  }, [sound])
+
+  const handleStart = async () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+    try {
+      const { sound: newSound } = await Audio.Sound.createAsync({ uri: START_SOUND })
+      setSound(newSound)
+      await newSound.playAsync()
+    } catch {}
+    router.push('/(auth)/phone')
   }
 
   return (
     <View style={styles.container}>
-      {/* Immersive World Background */}
+      {/* 1. Background Image */}
       <Image 
-        source={require('@/assets/images/onboarding_world.png')} 
-        style={StyleSheet.absoluteFill} 
-        resizeMode="cover" 
+        source={require('../../../assets/images/onboarding_world.png')} 
+        style={StyleSheet.absoluteFill}
+        contentFit="cover" 
       />
 
-      {/* Elegant Overlay Gradient for Text Readability */}
+      {/* 2. Full-screen Gradient Overlay */}
       <LinearGradient
         colors={[
           'transparent', 
-          isDark ? 'rgba(9,9,11,0.85)' : 'rgba(255,255,255,0.85)', 
+          isDark ? 'rgba(9,9,11,0.2)' : 'rgba(255,255,255,0.2)', 
+          isDark ? 'rgba(9,9,11,0.85)' : 'rgba(255,255,255,0.85)',
           isDark ? '#09090b' : '#ffffff'
         ]}
-        style={styles.gradient}
+        style={StyleSheet.absoluteFill}
       />
 
-      <View style={{ flex: 1, paddingTop: insets.top, paddingBottom: Math.max(insets.bottom, 20) }}>
-        {/* Nút chuyển đổi giao diện và ngôn ngữ ở góc trên bên phải */}
-        <View className="flex-row justify-end items-center px-6 pt-2 gap-3">
+
+
+      {/* 4. Content Layer */}
+      <View style={[styles.content, { paddingTop: insets.top, paddingBottom: insets.bottom + 20 }]}>
+        
+        {/* Top bar - Language & Theme */}
+        <View style={styles.topBar}>
           <LanguageToggle />
           <ThemeToggle minimal />
         </View>
 
-        <View className="flex-1 px-8 pb-10 justify-end">
-          
-          <View className="mb-8">
-            <View className="bg-emerald-500/20 dark:bg-emerald-500/30 self-start px-5 py-2 rounded-full mb-5 backdrop-blur-xl border border-emerald-500/20">
-              <Text className="text-emerald-700 dark:text-emerald-400 font-extrabold text-xs tracking-[2px] uppercase">
+        {/* Bottom Area */}
+        <View style={styles.bottomSection}>
+          <MotiView
+            from={{ opacity: 0, translateY: 30 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ type: 'spring', damping: 15, delay: 1000 }}
+          >
+            <View style={styles.badge}>
+              <Text className="text-emerald-600 dark:text-emerald-400 font-black text-[10px] tracking-[4px] uppercase">
                 {t('auth.onboarding.badge')}
               </Text>
             </View>
-            
-            {/* Sửa lỗi chữ đen trong Dark Mode bằng cách dùng class màu cụ thể */}
-            <Text className="text-5xl font-extrabold text-zinc-900 dark:text-zinc-50 mb-4 tracking-tighter leading-[1.1]">
+
+            <Text className="text-5xl font-black text-zinc-900 dark:text-zinc-50 mb-4 tracking-tighter leading-[1.1]">
               {t('auth.onboarding.title')}
             </Text>
-            <Text className="text-zinc-600 dark:text-zinc-400 text-xl leading-relaxed">
+
+            <Text className="text-zinc-500 dark:text-zinc-400 text-lg leading-relaxed font-bold mb-10">
               {t('auth.onboarding.description')}
             </Text>
-          </View>
 
-          <View className="gap-4 w-full">
-            <Button 
-              label={t('auth.onboarding.start')} 
-              onPress={() => router.push('/(auth)/phone')} 
-              size="lg" 
-              fullWidth 
-              className="shadow-2xl shadow-emerald-500/30"
-            />
-            <Button 
-              label={t('auth.onboarding.try_dev')} 
-              onPress={handleTestLogin} 
-              variant="secondary" 
-              size="md" 
-              loading={loading} 
-              fullWidth 
-            />
-          </View>
+            <Pressable onPress={handleStart}>
+              {({ pressed }) => (
+                <View style={[styles.button, pressed && styles.buttonPressed]}>
+                  <LinearGradient
+                    colors={['#10b981', '#059669']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.buttonGradient}
+                  >
+                    <Text style={styles.buttonText}>
+                      {t('auth.onboarding.start')}
+                    </Text>
+                  </LinearGradient>
+                </View>
+              )}
+            </Pressable>
+
+            <Text style={styles.version}>
+              Version 2.0.26 • NeuralEarn AI
+            </Text>
+          </MotiView>
         </View>
       </View>
     </View>
@@ -114,11 +135,68 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
-  gradient: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: height * 0.8, // Tăng độ phủ của gradient để chữ nổi bật hơn
+  content: {
+    flex: 1,
+    paddingHorizontal: 32,
+  },
+
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 10,
+    zIndex: 100,
+  },
+  bottomSection: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 20,
+  },
+  badge: {
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.2)',
+    marginBottom: 24,
+  },
+  button: {
+    height: 68,
+    borderRadius: 24,
+    overflow: 'hidden',
+    backgroundColor: '#10b981',
+    borderBottomWidth: 4,
+    borderBottomColor: '#064e3b',
+    shadowColor: '#10b981',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 8,
+  },
+  buttonPressed: {
+    transform: [{ translateY: 2 }],
+    borderBottomWidth: 2,
+  },
+  buttonGradient: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontFamily: 'BeVietnamPro-Black',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+  },
+  version: {
+    textAlign: 'center',
+    marginTop: 24,
+    color: '#94a3b8',
+    fontSize: 11,
+    fontWeight: '600',
   }
 })

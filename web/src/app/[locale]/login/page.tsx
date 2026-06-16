@@ -1,25 +1,27 @@
-import { LoginForm } from "@/features/auth/components/LoginForm";
+'use client';
+
+import { LoginForm } from '@/features/auth/components/login-form';
+import { Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-[#09090b] px-4">
-      {/* Background Glow */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-brand-primary/10 blur-[120px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-brand-primary/10 blur-[120px]" />
-
-      <div className="z-10 w-full flex flex-col items-center space-y-8">
-        <div className="flex items-center space-x-2 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center text-white font-bold text-xl shadow-lg">
-            N
+    <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-white">
+      <div className="w-full max-w-sm space-y-8">
+        <div className="text-center space-y-2">
+          <div className="w-12 h-12 bg-[#00a73d] rounded-2xl mx-auto flex items-center justify-center mb-6">
+            <Sparkles size={24} className="text-white" />
           </div>
-          <span className="text-2xl font-black tracking-tighter text-white">NeuralEarn</span>
+          <h1 className="text-3xl font-black tracking-tight text-zinc-900">StudyNest</h1>
+          <p className="text-zinc-500 font-medium">Đăng nhập vào hệ thống quản trị</p>
         </div>
-        
+
         <LoginForm />
-        
-        <p className="text-slate-500 text-sm">
-          Bằng cách tiếp tục, bạn đồng ý với <span className="text-slate-300 underline cursor-pointer">Điều khoản dịch vụ</span>
-        </p>
+
+        <div className="pt-8 border-t border-zinc-100 flex justify-center gap-6">
+          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Bảo mật</span>
+          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tin cậy</span>
+          <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Hiệu quả</span>
+        </div>
       </div>
     </main>
   );

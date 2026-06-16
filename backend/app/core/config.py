@@ -61,6 +61,10 @@ class Settings(BaseSettings):
     OTP_LENGTH: int = 6
     OTP_DEV_BYPASS: str = "999999"      # OTP giả khi dev (SMS_ENABLED=False)
 
+    # ── AI & ML ────────────────────────────────────────────────
+    GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-2.5-flash"
+
     # ── OAuth2 — Google ────────────────────────────────────────
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""

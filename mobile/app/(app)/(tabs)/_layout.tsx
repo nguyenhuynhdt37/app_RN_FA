@@ -12,6 +12,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { useColorScheme } from 'nativewind'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { BlurView } from 'expo-blur'
 
 const { width } = Dimensions.get('window')
 const TAB_BAR_WIDTH = width * 0.9
@@ -40,7 +41,7 @@ function TabBarIcon({ isFocused, routeName }: { isFocused: boolean, routeName: s
 
   return (
     <Animated.View style={animatedStyle}>
-      {getIcon(isFocused ? '#FFFFFF' : '#9ca3af')}
+      {getIcon(isFocused ? '#FFFFFF' : '#4b5563')}
     </Animated.View>
   )
 }
@@ -49,7 +50,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   const insets = useSafeAreaInsets()
   const { colorScheme } = useColorScheme()
   const isDark = colorScheme === 'dark'
-
+  const currentRouteName = state.routes[state.index].name
   const routes = state.routes.filter((r: any) => !['settings'].includes(r.name))
   const tabCount = routes.length
   const tabWidth = (TAB_BAR_WIDTH - 12) / tabCount
@@ -59,6 +60,8 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   const scale = useSharedValue(1)
 
   useEffect(() => {
+    if (activeIndex === -1) return
+
     // "Bulge" effect: Scale up then back to normal
     scale.value = withSequence(
       withSpring(1.18, { damping: 10, stiffness: 200 }),
@@ -79,29 +82,50 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
     ],
   }))
 
+  if (currentRouteName === 'settings') return null
+
   return (
     <View
       className="absolute left-0 right-0 items-center bg-transparent"
-      style={{ bottom: insets.bottom + 16 }}
+      style={{ bottom: insets.bottom + 4 }}
       pointerEvents="box-none"
     >
       <View
-        className="flex-row items-center h-[66px] bg-white/10 dark:bg-black/10 backdrop-blur-2xl rounded-full px-1.5"
-        style={{ 
-          width: TAB_BAR_WIDTH, 
-          borderWidth: 1, 
-          borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.2)',
+        style={{
+          width: TAB_BAR_WIDTH,
+          height: 74,
+          borderRadius: 37,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: isDark ? 0.5 : 0.1,
+          shadowRadius: 20,
+          elevation: 12,
+          backgroundColor: 'transparent',
         }}
       >
+        <BlurView
+          intensity={isDark ? 40 : 85}
+          tint={isDark ? 'dark' : 'light'}
+          style={{ 
+            flex: 1,
+            borderRadius: 37,
+            overflow: 'hidden',
+            borderWidth: 1, 
+            borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 8,
+          }}
+        >
         {/* iOS 26 Solid Capsule Indicator - Perfectly Rounded */}
         <Animated.View
           style={[
             {
               position: 'absolute',
               left: 6,
-              width: tabWidth - 4,
-              height: 56,
-              borderRadius: 28,
+              width: tabWidth - 6,
+              height: 60,
+              borderRadius: 30,
               backgroundColor: '#10B981',
               shadowColor: '#10B981',
               shadowOffset: { width: 0, height: 6 },
@@ -139,9 +163,10 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
             </Pressable>
           )
         })}
-      </View>
+      </BlurView>
     </View>
-  )
+  </View>
+)
 }
 
 export default function TabsLayout() {
@@ -150,6 +175,8 @@ export default function TabsLayout() {
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{ 
         headerShown: false,
+        tabBarTransparent: true,
+        tabBarBackground: () => <View />,
         tabBarStyle: {
           position: 'absolute',
           backgroundColor: 'transparent',

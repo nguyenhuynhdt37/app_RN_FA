@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { View, Pressable, Animated, Image, StyleSheet } from 'react-native'
+import { View, Pressable, Animated, Image } from 'react-native'
 import { Text } from '@/components/ui'
 import { Feather } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
@@ -11,41 +11,41 @@ export function HomeHeader() {
   const firstName = user?.full_name?.split(' ')[0] || 'Bạn'
 
   return (
-    <View style={styles.header}>
-      <View style={styles.left}>
-        <View style={styles.avatarWrapper}>
+    <View className="flex-row items-center justify-between px-6 pt-5 pb-2.5">
+      <View className="flex-row items-center flex-1">
+        <View className="relative w-[60px] h-[60px] items-center justify-center">
           {/* Decorative Background Ring */}
-          <View style={styles.avatarRing} />
+          <View className="absolute w-[58px] h-[58px] rounded-full border-[1.5px] border-emerald-500 opacity-15" />
           
-          <View style={styles.avatarContainer}>
+          <View className="w-[50px] h-[50px] rounded-full bg-emerald-50 overflow-hidden border-2 border-white">
             {user?.avatar_url ? (
               <Image 
                 source={{ uri: user.avatar_url }} 
-                style={styles.avatar}
+                className="w-full h-full"
                 resizeMode="cover"
               />
             ) : (
-              <View style={styles.placeholderAvatar}>
+              <View className="flex-1 items-center justify-center">
                 <Feather name="smile" size={26} color="#10b981" />
               </View>
             )}
           </View>
           
           {/* Status Badge */}
-          <View style={styles.statusBadge}>
-            <View style={styles.statusDot} />
+          <View className="absolute bottom-0.5 right-0.5 w-[18px] h-[18px] rounded-full bg-white items-center justify-center shadow-sm shadow-black elevation-sm">
+            <View className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
           </View>
         </View>
 
-        <View style={styles.textGroup}>
-          <Text style={styles.greeting}>Chào buổi sáng 👋</Text>
-          <Text style={styles.name} numberOfLines={1}>
+        <View className="ml-3.5 justify-center">
+          <Text className="text-[13px] font-semibold text-zinc-500 -mb-0.5">Chào buổi sáng 👋</Text>
+          <Text className="text-[22px] font-black text-zinc-900 tracking-tighter" numberOfLines={1}>
             {firstName}
           </Text>
         </View>
       </View>
 
-      <View style={styles.right}>
+      <View className="flex-row gap-2.5">
         <HeaderButton icon="search" />
         <HeaderButton icon="bell" hasDot />
       </View>
@@ -84,126 +84,11 @@ function HeaderButton({ icon, hasDot }: { icon: keyof typeof Feather.glyphMap; h
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={handlePress}
-        style={({ pressed }) => [
-          styles.btn,
-          { backgroundColor: pressed ? 'rgba(16,185,129,0.15)' : 'rgba(16,185,129,0.08)' }
-        ]}
+        className="w-12 h-12 rounded-full items-center justify-center border border-emerald-500/10 bg-emerald-500/[0.08] active:bg-emerald-500/15"
       >
         <Feather name={icon} size={22} color="#10b981" />
-        {hasDot && <View style={styles.btnDot} />}
+        {hasDot && <View className="absolute top-3 right-3 w-2 h-2 rounded-full bg-red-500 border-[1.5px] border-white" />}
       </Pressable>
     </Animated.View>
   )
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 10,
-  },
-  left: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  avatarWrapper: {
-    position: 'relative',
-    width: 60,
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarRing: {
-    position: 'absolute',
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    borderWidth: 1.5,
-    borderColor: '#10b981',
-    opacity: 0.15,
-  },
-  avatarContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#ecfdf5',
-    overflow: 'hidden',
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  avatar: {
-    width: '100%',
-    height: '100%',
-  },
-  placeholderAvatar: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statusBadge: {
-    position: 'absolute',
-    bottom: 2,
-    right: 2,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  statusDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#10b981',
-  },
-  textGroup: {
-    marginLeft: 14,
-    justifyContent: 'center',
-  },
-  greeting: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#71717a',
-    marginBottom: -2,
-  },
-  name: {
-    fontSize: 22,
-    fontWeight: '900',
-    color: '#09090b',
-    letterSpacing: -0.5,
-  },
-  right: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  btn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(16,185,129,0.1)',
-  },
-  btnDot: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#ef4444',
-    borderWidth: 1.5,
-    borderColor: '#fff',
-  },
-})

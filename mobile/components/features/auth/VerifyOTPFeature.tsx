@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, KeyboardAvoidingView, Platform, ScrollView, Pressable, Image, StyleSheet, Dimensions, useColorScheme } from 'react-native'
+import { View, KeyboardAvoidingView, Platform, ScrollView, Pressable, Image, Dimensions, useColorScheme } from 'react-native'
 import { useRouter } from 'expo-router'
 import { Button, OTPInput } from '@/components/ui'
 import { Text } from '@/components/ui/Text'
@@ -99,12 +99,12 @@ export function VerifyOTPFeature({
   }
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-black">
       {/* Immersive Background matching PhoneFeature */}
-      <View style={StyleSheet.absoluteFill}>
+      <View className="absolute inset-0">
         <Image
           source={require('@/assets/images/onboarding_world.png')}
-          style={StyleSheet.absoluteFill}
+          className="absolute inset-0 w-full h-full"
           resizeMode="cover"
           blurRadius={Platform.OS === 'ios' ? 12 : 6}
         />
@@ -114,19 +114,16 @@ export function VerifyOTPFeature({
             isDark ? 'rgba(9,9,11,0.95)' : 'rgba(255,255,255,0.92)',
             isDark ? '#09090b' : '#ffffff'
           ]}
-          style={StyleSheet.absoluteFill}
+          className="absolute inset-0"
         />
       </View>
 
-      <View style={{ flex: 1, paddingTop: insets.top }}>
+      <View style={{ paddingTop: insets.top }} className="flex-1">
         {/* Header with Circular Back Button */}
-        <View style={styles.header}>
+        <View className="px-6 py-3 z-[100]">
           <Pressable
             onPress={() => router.back()}
-            style={[styles.backBtn, {
-              backgroundColor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.05)',
-              borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-            }]}
+            className={`w-[52px] h-[52px] rounded-full items-center justify-center border ${isDark ? 'bg-white/15 border-white/10' : 'bg-black/5 border-black/10'}`}
           >
             <Feather name="arrow-left" size={26} color={isDark ? '#FFFFFF' : '#000000'} />
           </Pressable>
@@ -134,36 +131,32 @@ export function VerifyOTPFeature({
 
         <KeyboardAvoidingView 
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
-          style={{ flex: 1 }}
+          className="flex-1"
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
         >
           <ScrollView 
-            contentContainerStyle={[
-              styles.scrollContent, 
-              { paddingBottom: Math.max(insets.bottom, 40) }
-            ]} 
+            contentContainerStyle={{ 
+              paddingHorizontal: 24, 
+              paddingTop: 32, 
+              minHeight: height * 0.7,
+              paddingBottom: Math.max(insets.bottom, 40) 
+            }} 
             showsVerticalScrollIndicator={false}
           >
             
             {/* Elegant Header Section */}
-            <Animated.View entering={FadeInUp.duration(800)} style={{ marginBottom: 40 }}>
+            <Animated.View entering={FadeInUp.duration(800)} className="mb-10">
               <View className="flex-row items-center gap-4 mb-4">
-                <Text
-                  style={{ color: isDark ? '#FFFFFF' : '#09090B' }}
-                  className="text-5xl font-extrabold tracking-tighter leading-tight"
-                >
+                <Text className={`text-5xl font-extrabold tracking-tighter leading-tight ${isDark ? 'text-white' : 'text-zinc-950'}`}>
                   {t('auth.verify_title')}
                 </Text>
 
-                <View
-                  className="w-12 h-12 rounded-2xl items-center justify-center shadow-lg shadow-emerald-500/20"
-                  style={{ backgroundColor: isDark ? 'rgba(16, 185, 129, 0.2)' : 'rgba(16, 185, 129, 0.1)' }}
-                >
+                <View className={`w-12 h-12 rounded-2xl items-center justify-center shadow-lg shadow-emerald-500/20 ${isDark ? 'bg-emerald-500/20' : 'bg-emerald-500/10'}`}>
                   <Ionicons name="shield-checkmark" size={28} color="#10B981" />
                 </View>
               </View>
 
-              <Text style={{ color: isDark ? '#A1A1AA' : '#52525B' }} className="text-lg leading-relaxed">
+              <Text className={`text-lg leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
                 {t('auth.verify_msg')} {'\n'}
                 <Text className="font-bold text-emerald-500">{identifier}</Text>
               </Text>
@@ -180,7 +173,7 @@ export function VerifyOTPFeature({
                   ) : (
                     <View className="flex-row items-center gap-2">
                       <Feather name="clock" size={14} color={isDark ? '#A1A1AA' : '#71717A'} />
-                      <Text style={{ color: isDark ? '#A1A1AA' : '#71717A' }} className="text-sm font-medium">
+                      <Text className={`text-sm font-medium ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                         {t('auth.otp_expires_in')}: {formatTime(otpExpiry)}
                       </Text>
                     </View>
@@ -198,7 +191,7 @@ export function VerifyOTPFeature({
               />
 
               <View className="flex-row items-center justify-center mt-4">
-                <Text style={{ color: isDark ? '#A1A1AA' : '#52525B' }} className="text-base">
+                <Text className={`text-base ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
                   {t('auth.not_received')}{' '}
                 </Text>
                 <Pressable onPress={handleResend} disabled={countdown > 0}>
@@ -218,10 +211,3 @@ export function VerifyOTPFeature({
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
-  header: { paddingHorizontal: 24, paddingTop: 12, paddingBottom: 12, zIndex: 100 },
-  backBtn: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
-  scrollContent: { paddingHorizontal: 24, paddingTop: 32, minHeight: height * 0.7 }
-})

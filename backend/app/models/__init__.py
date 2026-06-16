@@ -4,6 +4,13 @@ can discover all tables automatically.
 """
 
 from app.models.database import (
+    # Enums
+    UserStatus,
+    DeviceType,
+    OtpType,
+    CourseLevel,
+    CoinTransactionType,
+    # Users & Auth
     Users,
     Roles,
     UserRoles,
@@ -12,11 +19,40 @@ from app.models.database import (
     OauthAccounts,
     PhoneVerifications,
     LoginAttempts,
+    # Categories (reference table)
+    Categories,
+    CategoryTranslations,
+    CourseCategories,
+    # Tags
+    Tags,
+    TagTranslations,
+    # References
     SpecializationsReference,
+    SpecializationTranslations,
     SkillsReference,
+    SkillTranslations,
     InterestsReference,
+    InterestTranslations,
+    # User Profile
     UserSpecializations,
-    UserStatus,
-    DeviceType,
-    OtpType,
+    UserInterests,
+    # Course
+    Courses,
+    CourseTranslations,
+    CourseLearningOutcomes,
+    CourseLearningOutcomeTranslations,
+    CoursePrerequisites,
+    CoursePrerequisiteTranslations,
+    CourseTags,
+    # Learning Content
+    Sections,
+    SectionTranslations,
+    LearningUnits,
+    LearningUnitTranslations,
+    LearningBlocks,
+    # Progress
+    CourseProgress,
+    # Coin
+    UserCoins,
+    CoinTransactions,
 )

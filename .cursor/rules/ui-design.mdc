@@ -1,0 +1,376 @@
+---
+name: neuralearn-ui-design
+description: NeuralEarn UI Design System 2026 - Premium Minimalist, Ultra-Rounded, Emerald Palette
+globs:
+  - "**/*.tsx"
+  - "**/*.ts"
+alwaysApply: true
+---
+
+# NeuralEarn UI Design System 2026
+
+## Philosophy
+
+**"Minimalist, Ultra-Rounded, and butter smooth."**
+
+Tất cả UI phải mang lại cảm giác cực kỳ tối giản, bo tròn mềm mại và cao cấp.
+
+---
+
+## Color System
+
+### Primary Palette: Emerald Monochromatic
+
+```css
+/* Primary - Emerald */
+.emerald-50  { color: #ecfdf5; }
+.emerald-100 { color: #d1fae5; }
+.emerald-200 { color: #a7f3d0; }
+.emerald-300 { color: #6ee7b7; }
+.emerald-400 { color: #34d399; }
+.emerald-500 { color: #10b981; }  /* MAIN ACCENT */
+.emerald-600 { color: #059669; }
+.emerald-700 { color: #047857; }
+.emerald-800 { color: #065f46; }
+.emerald-900 { color: #064e3b; }
+```
+
+### Semantic Colors
+
+| Name | Hex | Usage |
+|------|-----|-------|
+| Success | `#10b981` | Confirmations, positive actions |
+| Warning | `#f59e0b` | Cautions, pending states |
+| Error | `#ef4444` | Errors, destructive actions |
+| Info | `#3b82f6` | Information, links |
+
+### Background System
+
+```css
+/* Mobile App - Ambient Mesh Glow */
+.mesh-gradient {
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.15) 0%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(16, 185, 129, 0.08) 100%
+  );
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.dark .glass {
+  background: rgba(24, 24, 27, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+```
+
+---
+
+## Typography
+
+### Font Stack
+
+```css
+/* Mobile - Be Vietnam Pro */
+font-family: 'BeVietnamPro', -apple-system, sans-serif;
+
+/* Web - Be Vietnam Pro */
+font-family: 'BeVietnamPro', system-ui, sans-serif;
+```
+
+### Type Scale
+
+| Element | Weight | Size | Line Height | Letter Spacing |
+|---------|--------|------|-------------|----------------|
+| Display | Black (900) | 32px | 40px | -0.5px |
+| H1 | Black (900) | 28px | 34px | -0.5px |
+| H2 | Bold (700) | 24px | 30px | -0.3px |
+| H3 | Bold (700) | 20px | 26px | -0.2px |
+| Body Large | Semibold (600) | 18px | 28px | 0 |
+| Body | Semibold (600) | 16px | 24px | 0 |
+| Body Small | Medium (500) | 14px | 20px | 0 |
+| Caption | Medium (500) | 12px | 16px | 0.2px |
+| Label | Black (900) | 10px | 14px | 2px |
+
+---
+
+## Border Radii (Ultra-Rounded)
+
+### The Golden Rule
+
+> **Cards: `48px` | Buttons: `full` | Inputs: `full` | Modals: `28px`**
+
+```css
+/* Card - Ultra Rounded (MANDATORY) */
+.card-ultra {
+  border-radius: 48px;
+}
+
+/* Buttons - Pill Shape */
+.button-pill {
+  border-radius: 9999px;
+}
+
+/* Small Elements - Full Round */
+.icon-container {
+  border-radius: 50%;
+}
+
+/* Inputs - Pill */
+.input-pill {
+  border-radius: 9999px;
+}
+
+/* Modals */
+.modal {
+  border-radius: 28px;
+}
+
+/* Tables - Medium */
+.table-cell {
+  border-radius: 12px;
+}
+```
+
+### Anti-patterns to Avoid
+
+```css
+/* ❌ WRONG - Never use these */
+border-radius: 4px;   /* Too sharp */
+border-radius: 8px;   /* Still sharp */
+border-radius: 16px;  /* Acceptable but not premium */
+
+/* ✅ CORRECT - Ultra rounded */
+border-radius: 48px;  /* Cards */
+border-radius: 9999px; /* Buttons, Inputs, Pills */
+```
+
+---
+
+## Component Standards
+
+### 1. Premium Card
+
+```tsx
+// Mobile (React Native)
+<div className="rounded-[48px] bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-100 dark:border-white/5 p-6">
+
+// Web (Tailwind)
+<div className="rounded-[48px] bg-white/40 dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-100 dark:border-white/5 p-6">
+```
+
+### 2. Primary Button
+
+```tsx
+// Mobile
+<TouchableOpacity 
+  className="px-6 py-3 bg-emerald-500 rounded-full"
+  activeOpacity={0.8}
+>
+  <Text className="text-white font-bold text-base">Button</Text>
+</TouchableOpacity>
+
+// Web
+<button className="px-6 py-3 bg-emerald-500 text-white font-bold rounded-full hover:bg-emerald-600 transition-all hover:scale-105 active:scale-95">
+  Button
+</button>
+```
+
+### 3. Input Field
+
+```tsx
+// Mobile
+<View className="rounded-full bg-zinc-100 dark:bg-white/5 border border-transparent focus:border-emerald-500 px-4 py-3">
+  <TextInput placeholder="Enter text..." />
+</View>
+
+// Web
+<input 
+  className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 rounded-full border border-slate-200 dark:border-white/8 outline-none focus:border-emerald-500 transition-colors"
+  placeholder="Enter text..."
+/>
+```
+
+### 4. Badge/Tag
+
+```tsx
+// Mobile & Web
+<span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">
+  Active
+</span>
+```
+
+---
+
+## Iconography
+
+### Lucide Icons Only
+
+```tsx
+import { Search, Plus, User, Settings } from 'lucide-react-native'; // Mobile
+import { Search, Plus, User, Settings } from 'lucide-react';        // Web
+
+// ✅ CORRECT - Monochrome Emerald
+<Icon name="search" color="#10b981" strokeWidth={2.5} />
+
+// ❌ WRONG - Multi-color icons
+<Icon name="warning" color={['#ef4444', '#f59e0b']} />
+```
+
+### Icon Sizes & Stroke
+
+| Context | Size | Stroke Width |
+|---------|------|--------------|
+| Inline text | 16px | 2 |
+| Button icon | 16-20px | 2 |
+| Container icon | 24px | 2.5 |
+| Hero icon | 32px | 2 |
+
+---
+
+## Spacing System
+
+### Mobile (8pt Grid)
+
+| Token | Value |
+|-------|-------|
+| xs | 4px |
+| sm | 8px |
+| md | 16px |
+| lg | 24px |
+| xl | 32px |
+| 2xl | 48px |
+| 3xl | 64px |
+
+### Web (Tailwind Scale)
+
+Use Tailwind's default scale with consistent semantic names.
+
+---
+
+## Shadows & Depth
+
+### NO SHADOWS - Border Hierarchy
+
+> **Tuyệt đối KHÔNG sử dụng `shadow-*` trong design system**
+
+Depth được tạo bằng:
+1. **Layering** - Lớp nền phía sau
+2. **Backdrop blur** - Hiệu ứng mờ
+3. **Border** - Viền mỏng để phân tách
+4. **Opacity** - Độ trong suốt
+
+```css
+/* ❌ WRONG - Using shadows */
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+/* ✅ CORRECT - Border hierarchy */
+border: 1px solid rgba(0, 0, 0, 0.05);
+```
+
+---
+
+## Animation
+
+### Spring Physics (MANDATORY)
+
+```tsx
+// Mobile - react-native-reanimated
+const scale = useSharedValue(1);
+
+const animatedStyle = useAnimatedStyle(() => ({
+  transform: [{ scale: scale.value }],
+}));
+
+const handlePressIn = () => {
+  'worklet';
+  scale.value = withSpring(0.98, { damping: 15, stiffness: 150 });
+};
+
+const handlePressOut = () => {
+  'worklet';
+  scale.value = withSpring(1, { damping: 15, stiffness: 150 });
+};
+
+// Web - framer-motion
+const variants = {
+  initial: { scale: 1 },
+  pressed: { scale: 0.98 },
+};
+
+<motion.button
+  whileTap="pressed"
+  variants={variants}
+  transition={{ type: 'spring', damping: 15, stiffness: 150 }}
+>
+  Button
+</motion.button>
+```
+
+### Animation Principles
+
+1. **Spring-based** - Không dùng linear easing
+2. **Quick response** - ~100-200ms cho micro-interactions
+3. **Scale down** - `scale: 0.98` khi press
+4. **Subtle** - Không quá dramatic
+
+---
+
+## Accessibility
+
+### Color Contrast
+
+| Element | Min Contrast |
+|---------|--------------|
+| Body text | 4.5:1 |
+| Large text | 3:1 |
+| UI components | 3:1 |
+
+### Touch Targets
+
+```css
+/* Mobile - Minimum 44x44px */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+```
+
+### Focus States
+
+```css
+/* Web - Visible focus ring */
+button:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+```
+
+---
+
+## Checklist
+
+### Before Ship
+
+- [ ] Icons: Lucide + Emerald monochrome?
+- [ ] Cards: `rounded-[48px]`?
+- [ ] Buttons: `rounded-full`?
+- [ ] Inputs: `rounded-full`?
+- [ ] No shadows used?
+- [ ] Glassmorphism applied?
+- [ ] Typography: Be Vietnam Pro?
+- [ ] Animation: Spring physics?
+- [ ] Press interaction: `scale: 0.98`?
+- [ ] Bilingual: i18n function used?
+- [ ] Dark mode: `dark:` variants added?
+
+---
+
+> _"NeuralEarn 2026: Minimalist, Ultra-Rounded, and butter smooth."_

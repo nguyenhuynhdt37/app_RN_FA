@@ -1,28 +1,263 @@
 {
-  "Home": {
-    "badge": "NeuralEarn Management",
-    "title": "Smart Data Management",
-    "titleAccent": "Data",
-    "description": "Premium management system for the NeuralEarn ecosystem. Monitor sessions, manage users, and configure system settings in real-time.",
-    "getStarted": "Get Started",
-    "viewDocs": "View Docs",
-    "preview": "Dashboard Preview Coming Soon"
-  },
-  "Auth": {
-    "login": {
-      "title": "Welcome Back",
-      "description": "Enter your email or phone number to continue",
-      "otpDescription": "OTP code has been sent to {identifier}",
-      "placeholder": "Email or Phone number",
-      "otpPlaceholder": "Enter 6-digit OTP",
-      "continue": "Continue",
-      "confirm": "Confirm",
-      "processing": "Processing...",
-      "changeIdentifier": "Change contact information",
-      "terms": "By continuing, you agree to our {terms}"
+  "Courses": {
+    "title": "Explore Knowledge",
+    "titleHighlight": "Knowledge",
+    "subtitle": "Learn from top experts and elevate your skills.",
+    "searchPlaceholder": "Search courses...",
+    "enrollCount": "{count} students",
+    "rating": "{count}",
+    "price": "Course Price",
+    "free": "Free",
+    "loading": "Loading data...",
+    "notFound": "No courses found",
+    "tryAgain": "Try searching with a different keyword.",
+    "categories": {
+      "all": "All",
+      "programming": "Programming",
+      "design": "Design",
+      "marketing": "Marketing",
+      "business": "Business"
     }
   },
-  "Common": {
-    "terms": "Terms of Service"
+  "Home": {
+    "title": "Smart Learning",
+    "subtitle": "2026 Learning Platform",
+    "getStarted": "Get Started"
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "revenue": "Revenue",
+    "students": "Students",
+    "courses": "Courses"
+  },
+  "Admin": {
+    "categories": {
+      "title": "Categories",
+      "subtitle": "{total} categories organizing {courses} courses",
+      "courseUnit": "courses",
+      "untitled": "Untitled",
+      "noDescription": "No description is available for this category.",
+      "unknown": "Unknown",
+      "resultSummary": "{count} / {total} categories",
+      "enrollSummary": "{count} enrollments across categories",
+      "actions": {
+        "refresh": "Refresh",
+        "retry": "Try again",
+        "clearFilters": "Clear filters",
+        "clearSearch": "Clear search",
+        "create": "Create category",
+        "edit": "Edit Vietnamese",
+        "delete": "Delete"
+      },
+      "filters": {
+        "search": "Search categories, descriptions, or IDs...",
+        "all": "All categories",
+        "withCourses": "With courses",
+        "empty": "No courses"
+      },
+      "sort": {
+        "newest": "Newest",
+        "updated": "Recently updated",
+        "mostCourses": "Most courses",
+        "nameAsc": "Name A-Z",
+        "nameDesc": "Name Z-A"
+      },
+      "view": {
+        "grid": "Grid view",
+        "table": "Table view"
+      },
+      "stats": {
+        "total": "Total categories",
+        "active": "In use",
+        "courses": "Courses",
+        "empty": "Empty"
+      },
+      "card": {
+        "translations": "Translations",
+        "updated": "Updated"
+      },
+      "table": {
+        "category": "Category",
+        "description": "Description",
+        "courses": "Courses",
+        "translations": "Languages",
+        "updated": "Updated",
+        "action": "Actions",
+        "noDescription": "No description",
+        "unknown": "Unknown"
+      },
+      "empty": {
+        "title": "No categories found",
+        "subtitle": "Try changing the filters or search query."
+      },
+      "errors": {
+        "loadFailed": "Unable to load categories",
+        "CATEGORY_CREATE_FAILED": "Unable to create the category. Please try again.",
+        "CATEGORY_TRANSLATION_FAILED": "Unable to generate the English translation. Check Gemini configuration or try again.",
+        "CATEGORY_ALREADY_EXISTS": "This Vietnamese category already exists.",
+        "CATEGORY_NOT_FOUND": "This category was not found.",
+        "CATEGORY_DETAIL_FAILED": "Unable to load category detail.",
+        "CATEGORY_UPDATE_FAILED": "Unable to update the category.",
+        "CATEGORY_DELETE_FAILED": "Unable to delete the category. Please try again.",
+        "CATEGORY_HAS_COURSES": "Cannot delete a category that is linked to courses.",
+        "VALIDATION_ERROR": "The submitted data is invalid.",
+        "UNAUTHORIZED": "Please sign in again.",
+        "FORBIDDEN": "You do not have permission to create categories."
+      },
+      "detail": {
+        "back": "Back to categories",
+        "translations": "Category translations",
+        "languages": "languages",
+        "autoTranslated": "AI translated",
+        "manual": "Admin entered",
+        "courses": "Courses in category",
+        "noCourses": "This category does not have courses yet.",
+        "generatedAt": "Data updated",
+        "stats": {
+          "totalCourses": "Total courses",
+          "published": "Published",
+          "enrolls": "Enrollments",
+          "revenue": "Revenue"
+        },
+        "courseMetrics": {
+          "enrolls": "Enrollments",
+          "views": "Views",
+          "revenue": "Revenue"
+        }
+      },
+      "pagination": {
+        "previous": "Previous page",
+        "next": "Next page",
+        "page": "Page {page} / {total}"
+      },
+      "create": {
+        "title": "Create Category",
+        "subtitle": "Enter Vietnamese content",
+        "close": "Close",
+        "nameLabel": "Category name",
+        "namePlaceholder": "Example: English",
+        "descriptionLabel": "Draft description",
+        "descriptionPlaceholder": "Optional. AI will write or improve the description from the category name.",
+        "cancel": "Cancel",
+        "submit": "Create",
+        "submitting": "Creating",
+        "success": "Category created"
+      },
+      "edit": {
+        "title": "Edit Category",
+        "subtitle": "Vietnamese content only",
+        "close": "Close",
+        "nameLabel": "Category name",
+        "namePlaceholder": "Example: English",
+        "descriptionLabel": "Vietnamese description",
+        "descriptionPlaceholder": "Enter the Vietnamese description. AI will regenerate English if anything changes.",
+        "aiNote": "On save, the backend regenerates English content for mobile.",
+        "cancel": "Cancel",
+        "submit": "Save changes",
+        "submitting": "Saving"
+      },
+      "delete": {
+        "title": "Delete Category",
+        "subtitle": "This action cannot be undone",
+        "categoryLabel": "Category to delete:",
+        "warning": "You can only delete categories that are not linked to any courses. This will also remove the English translation.",
+        "close": "Close",
+        "cancel": "Cancel",
+        "proceed": "Delete",
+        "confirm": "Confirm delete",
+        "deleting": "Deleting",
+        "success": "Category deleted"
+      }
+    },
+    "courses": {
+      "title": "Course Management",
+      "subtitle": "Design optimal learning paths for your users.",
+      "courseUnit": "courses",
+      "untitled": "Untitled",
+      "noDescription": "No description.",
+      "unknown": "Unknown",
+      "resultSummary": "{count} / {total} courses",
+      "actions": {
+        "refresh": "Refresh",
+        "retry": "Try again",
+        "clearFilters": "Clear filters",
+        "clearSearch": "Clear search",
+        "create": "Create course",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "filters": {
+        "search": "Search name, slug, tags...",
+        "all": "All",
+        "allLevels": "All levels",
+        "allCategories": "All categories"
+      },
+      "sort": {
+        "newest": "Newest",
+        "updated": "Recently updated",
+        "mostRevenue": "Highest revenue",
+        "mostViews": "Most views",
+        "mostEnrolls": "Most enrollments",
+        "bestRating": "Best rating",
+        "nameAsc": "Name A-Z",
+        "nameDesc": "Name Z-A"
+      },
+      "view": {
+        "grid": "Grid view",
+        "table": "Table view"
+      },
+      "stats": {
+        "total": "Total courses",
+        "active": "Published",
+        "courses": "Courses",
+        "empty": "Empty",
+        "published": "Published",
+        "draft": "Draft"
+      },
+      "table": {
+        "course": "Course",
+        "description": "Description",
+        "courses": "Courses",
+        "category": "Category",
+        "level": "Level",
+        "instructor": "Instructor",
+        "enrolls": "Students",
+        "revenue": "Revenue",
+        "status": "Status",
+        "updated": "Updated",
+        "action": "Actions",
+        "noDescription": "No description",
+        "unknown": "Unknown"
+      },
+      "level": {
+        "BEGINNER": "Beginner",
+        "INTERMEDIATE": "Intermediate",
+        "ADVANCED": "Advanced"
+      },
+      "status": {
+        "published": "Published",
+        "draft": "Draft",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "empty": {
+        "title": "No courses found",
+        "subtitle": "Try changing the filters or create a new course."
+      },
+      "errors": {
+        "loadFailed": "Unable to load courses",
+        "COURSE_LIST_FAILED": "Unable to load courses.",
+        "COURSE_STATS_FAILED": "Unable to load course statistics.",
+        "COURSE_CREATE_FAILED": "Unable to create the course. Please try again.",
+        "COURSE_UPDATE_FAILED": "Unable to update the course.",
+        "COURSE_DELETE_FAILED": "Unable to delete the course.",
+        "COURSE_NOT_FOUND": "This course was not found.",
+        "CATEGORY_LIST_FAILED": "Unable to load categories.",
+        "VALIDATION_ERROR": "The submitted data is invalid.",
+        "UNAUTHORIZED": "Please sign in again.",
+        "FORBIDDEN": "You do not have permission to perform this action."
+      }
+    }
   }
 }

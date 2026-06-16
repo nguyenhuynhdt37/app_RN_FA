@@ -1,0 +1,239 @@
+---
+name: neuralearn-backend
+description: FastAPI backend conventions for NeuralEarn - SQLAlchemy 2.0, Pydantic V2, Async patterns
+globs:
+  - "backend/**/*.py"
+alwaysApply: false
+---
+
+# NeuralEarn Backend Rules
+
+## Architecture
+
+### Clean Architecture Order (MANDATORY)
+
+Khi tạo API feature mới, LUÔN theo thứ tự:
+
+```
+1. Schema    → /schemas/{module}.py    (Pydantic V2)
+2. Model     → /models/{module}.py     (SQLAlchemy 2.0)
+3. Service   → /services/{module}.py   (Business Logic)
+4. Router    → /api/v1/{module}.py      (Endpoints - THIN LAYER)
+```
+
+> **Router chỉ gọi Service, KHÔNG chứa business logic**
+
+### Directory Structure
+
+```
+backend/app/
+├── api/v1/              # Thin routers only
+│   ├── auth.py
+│   ├── courses.py
+│   └── admin.py
+├── core/
+│   ├── config.py         # Pydantic BaseSettings
+│   ├── security.py       # JWT, password hashing
+│   ├── dependencies.py   # Shared Depends()
+│   └── logging.py       # Structured logging
+├── models/
+│   └── database.py       # All SQLAlchemy models
+├── schemas/
+│   ├── auth.py
+│   ├── course.py
+│   └── admin.py
+├── services/
+│   ├── auth.py
+│   ├── ai_service.py
+│   └── storage.py
+└── main.py              # App factory
+```
+
+## Coding Standards
+
+### 1. Strict Typing
+
+```python
+# ✅ CORRECT
+from typing import Optional, Sequence, Annotated
+from sqlalchemy.ext.asyncio import AsyncSession
+
+async def get_user_by_id(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    user_id: int
+) -> Optional[User]:
+    ...
+
+# ❌ WRONG
+async def get_user_by_id(db, user_id):
+    return db.query(User).filter(User.id == user_id).first()
+```
+
+### 2. Pydantic V2 Models
+
+```python
+# ✅ CORRECT
+from pydantic import BaseModel, ConfigDict, field_validator
+
+class UserCreate(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
+    email: EmailStr
+    password: Annotated[str, Field(min_length=8)]
+    
+    @field_validator('email')
+    @classmethod
+    def lowercase_email(cls, v: str) -> str:
+        return v.lower()
+
+# ❌ WRONG - bare dict
+async def create_user(data: dict):
+    ...
+```
+
+### 3. Error Codes (MUST USE)
+
+```python
+# ✅ CORRECT - structured error codes
+from fastapi import HTTPException, status
+
+class ErrorCodes:
+    USER_NOT_FOUND = "USER_NOT_FOUND"
+    INVALID_CREDENTIALS = "INVALID_CREDENTIALS"
+    EMAIL_ALREADY_EXISTS = "EMAIL_ALREADY_EXISTS"
+    TOKEN_EXPIRED = "TOKEN_EXPIRED"
+
+# In router/service:
+raise HTTPException(
+    status_code=status.HTTP_404_NOT_FOUND,
+    detail={"code": ErrorCodes.USER_NOT_FOUND, "message": "User not found"}
+)
+
+# ❌ WRONG - plain text
+raise HTTPException(status_code=404, detail="User not found")
+```
+
+### 4. Service Pattern
+
+```python
+# ✅ CORRECT
+class CourseService:
+    def __init__(self, db: AsyncSession):
+        self._db = db
+    
+    async def create_course(self, data: CourseCreate) -> Course:
+        try:
+            course = Course(**data.model_dump())
+            self._db.add(course)
+            await self._db.commit()
+            await self._db.refresh(course)
+            return course
+        except Exception as e:
+            await self._db.rollback()
+            logger.error(f"Failed to create course: {e}", exc_info=True)
+            raise
+
+# ❌ WRONG - logic in router
+@router.post("/courses")
+async def create_course(course: CourseCreate, db: AsyncSession = Depends()):
+    course = Course(**course.dict())  # NO!
+    db.add(course)
+    db.commit()  # NO business logic in router!
+```
+
+### 5. Async Everything
+
+```python
+# ✅ CORRECT - 100% async
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+import aioredis
+
+engine = create_async_engine(DATABASE_URL, echo=False)
+
+async def get_db():
+    async with AsyncSession(engine) as session:
+        yield session
+
+# For external HTTP calls
+import httpx
+async with httpx.AsyncClient() as client:
+    response = await client.get("https://api.example.com")
+
+# ❌ WRONG - blocking code
+import requests  # requests is synchronous!
+response = requests.get("https://api.example.com")  # BLOCKS event loop!
+```
+
+### 6. Schema Separation
+
+Mỗi entity cần có đủ 4 loại schema:
+
+```python
+# 1. Create request (input)
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+
+# 2. Update request (partial input)
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    display_name: Optional[str] = None
+
+# 3. Public response (output)
+class UserResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    email: str
+    display_name: Optional[str]
+
+# 4. Internal/Admin response (full data)
+class UserAdminResponse(UserResponse):
+    is_active: bool
+    is_verified: bool
+    created_at: datetime
+```
+
+## Database Rules
+
+### SQLAlchemy 2.0 Declarative
+
+```python
+# ✅ CORRECT
+from sqlalchemy import String, Boolean, DateTime
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from datetime import datetime
+
+class Base(DeclarativeBase):
+    pass
+
+class User(Base):
+    __tablename__ = "users"
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    courses: Mapped[List["Course"]] = relationship("Course", back_populates="instructor")
+```
+
+## Security Rules
+
+1. **Hash passwords** - Dùng `bcrypt` hoặc `argon2`
+2. **JWT with expiration** - Access token ngắn (15-30 phút), refresh token dài
+3. **CSRF protection** - Validate origins
+4. **Rate limiting** - Áp dụng cho auth endpoints
+5. **Never expose secrets** - Dùng environment variables
+
+## Performance Rules
+
+1. **Pagination** - List endpoints PHẢI có pagination
+2. **Indexing** - Thêm indexes cho foreign keys và frequently queried columns
+3. **Caching** - Dùng Redis cho expensive operations
+4. **Connection pooling** - Configure pool size phù hợp
+5. **Bulk operations** - Dùng `bulk_insert_mappings` cho batch imports
+
+---
+
+> Reference: `.agents/skills/fastapi-master-2026/SKILL.md`

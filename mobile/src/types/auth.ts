@@ -38,6 +38,7 @@ export interface User {
   preferred_learning_style: string | null
   social_links: Record<string, string>
   avatar_url: string | null
+  cover_url: string | null
   status: 'ACTIVE' | 'BLOCKED' | 'PENDING'
   is_verified: boolean
   roles: string[]

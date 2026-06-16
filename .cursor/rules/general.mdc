@@ -1,0 +1,131 @@
+---
+name: neuralearn-general
+description: General coding conventions for NeuralEarn project - all platforms
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# NeuralEarn General Coding Conventions
+
+## Project Overview
+
+NeuralEarn là nền tảng học tập trực tuyến với 3 platform:
+- **Backend**: FastAPI + PostgreSQL + Redis (Python)
+- **Mobile**: React Native + Expo (TypeScript)
+- **Web**: Next.js 15 + Tailwind v4 (TypeScript)
+
+## ✅ MUST DO
+
+### 1. Error Handling
+- Luôn wrap logic trong `try/catch`
+- Sử dụng mã lỗi (error codes) thay vì plain text:
+  ```
+  ❌ "Username already exists"
+  ✅ "USERNAME_ALREADY_EXISTS" → frontend tự translate
+  ```
+- Log error với `exc_info=True` để debug
+
+### 2. Validation
+- Validate input ở **tất cả các lớp**: API → Service → Database
+- Không trust any user input
+- Dùng typed validation models (Pydantic V2 / Zod)
+
+### 3. Naming Conventions
+
+| Type | Convention | Example |
+|------|------------|---------|
+| Variables | camelCase | `userData`, `isLoading` |
+| Functions | camelCase | `getUserById`, `fetchCourses` |
+| Classes | PascalCase | `UserService`, `CourseModel` |
+| Constants | UPPER_SNAKE | `MAX_RETRY_COUNT` |
+| Files | kebab-case | `user-service.ts`, `auth_api.py` |
+| Tables (DB) | snake_case plural | `users`, `course_categories` |
+| API endpoints | kebab-case | `/api/v1/course-categories` |
+
+### 4. Type Safety
+- **NEVER use `any` type** - dùng `unknown` + type guard nếu cần
+- **Luôn khai báo types** cho function parameters và return values
+- Dùng `Optional[T]` hoặc `T | null` thay vì optional fields không type
+
+### 5. Code Organization
+- Single Responsibility: Mỗi module/file chỉ làm 1 việc
+- KISS: Keep It Simple, Stupid
+- DRY: Don't Repeat Yourself - extract common logic
+
+### 6. Performance
+- Dùng `async/await` cho tất cả IO operations
+- Tránh blocking operations trong request handlers
+- Implement pagination cho list endpoints
+
+## ❌ NEVER DO
+
+1. **Hardcode secrets** - Dùng environment variables
+2. **Console.log/debug** trong production code
+3. **Comment ngớ ngẩn**:
+   ```
+   ❌ // Increment counter by 1
+   ❌ // Define function
+   ✅ // Prevent double-submission during network latency
+   ```
+4. **Dead code** - Xóa unused imports, functions, variables
+5. **Magic numbers** - Define constants có tên
+6. **Mix concerns** - Không đặt business logic trong UI components
+
+## 📁 File Structure Convention
+
+```
+# Backend (FastAPI)
+backend/app/
+├── api/v1/          # Routers (thin, chỉ call service)
+├── core/            # Config, security, dependencies
+├── models/          # SQLAlchemy models
+├── schemas/         # Pydantic models
+├── services/        # Business logic
+└── main.py          # App factory
+
+# Mobile (React Native)
+mobile/
+├── app/             # Navigation screens
+├── components/      # Shared UI components
+│   ├── features/   # Feature-specific components
+│   ├── layout/     # Layout components
+│   └── ui/         # Atomic UI components
+├── src/
+│   ├── services/   # API services
+│   ├── stores/     # Zustand stores
+│   ├── types/      # TypeScript types
+│   └── utils/      # Utilities
+└── assets/         # Images, fonts, animations
+
+# Web (Next.js)
+web/src/
+├── app/[locale]/   # App Router pages
+├── features/        # Feature modules (FSD)
+├── components/     # Shared UI components
+├── lib/            # Utilities, API clients
+├── hooks/          # Custom hooks
+├── store/          # Zustand stores
+└── types/          # TypeScript types
+```
+
+## 🔄 Git Workflow
+
+- **Commit message format**: `type(scope): description`
+  - types: `feat`, `fix`, `refactor`, `docs`, `chore`
+  - scope: `backend`, `mobile`, `web`, `ui`, `api`
+  - Ví dụ: `feat(mobile): add onboarding screen`
+
+- **Branch naming**: `type/ticket-description`
+  - `feature/add-payment-module`
+  - `fix/auth-token-refresh`
+
+## 🌍 Internationalization (i18n)
+
+- **Tất cả user-facing text phải qua i18n function**
+- Key format: `section.action` (VD: `auth.login.success`)
+- Mobile/Web dùng tiếng Việt và tiếng Anh
+
+---
+
+> _"NeuralEarn 2026: Minimalist, Ultra-Rounded, and butter smooth."_

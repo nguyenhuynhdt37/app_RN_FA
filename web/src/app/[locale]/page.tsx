@@ -1,43 +1,39 @@
-import { useTranslations } from 'next-intl';
+'use client';
 
-export default function Home() {
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
+
+export default function HomePage() {
   const t = useTranslations('Home');
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-[#09090b]">
-      {/* Background Glow */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-brand-primary/10 blur-[120px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-brand-primary/10 blur-[120px]" />
-
-      <div className="z-10 text-center space-y-8 max-w-2xl px-4">
-        <div className="inline-block px-4 py-1.5 rounded-full glass border border-white/10 text-brand-secondary text-sm font-medium tracking-wider uppercase mb-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          {t('badge')}
+    <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-white">
+      <div className="max-w-xl text-center space-y-6">
+        <div className="w-16 h-16 bg-[#00a73d] rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-[#00a73d]/20">
+          <div className="w-8 h-8 border-4 border-white rounded-full border-t-transparent animate-spin-slow" />
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white drop-shadow-2xl">
-          {t.rich('title', {
-            accent: (chunks) => <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-accent">{chunks}</span>
-          })}
+        <h1 className="text-4xl font-black text-[#09090b] tracking-tight">
+          {t('title')}
         </h1>
         
-        <p className="text-lg text-zinc-400 font-medium leading-relaxed">
-          {t('description')}
+        <p className="text-zinc-500 font-medium leading-relaxed">
+          {t('subtitle')}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-          <button className="px-8 py-4 rounded-2xl bg-white text-black font-bold hover:scale-105 transition-transform duration-300">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+          <Link 
+            href="/dashboard" 
+            className="bg-[#00a73d] text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-all active:scale-95"
+          >
+            Dashboard
+          </Link>
+          <Link 
+            href="/home" 
+            className="bg-zinc-100 text-zinc-900 px-8 py-3 rounded-xl font-bold hover:bg-zinc-200 transition-all active:scale-95"
+          >
             {t('getStarted')}
-          </button>
-          <button className="px-8 py-4 rounded-2xl glass text-white font-bold border border-white/10 hover:bg-white/5 transition-all duration-300">
-            {t('viewDocs')}
-          </button>
-        </div>
-      </div>
-
-      {/* Preview Card */}
-      <div className="mt-20 w-full max-w-5xl px-4 animate-in fade-in zoom-in duration-1000 delay-500">
-        <div className="glass-card aspect-video w-full flex items-center justify-center text-zinc-500 border border-white/5">
-          <p className="font-mono text-sm uppercase tracking-widest">{t('preview')}</p>
+          </Link>
         </div>
       </div>
     </main>

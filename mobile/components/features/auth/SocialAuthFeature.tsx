@@ -54,28 +54,13 @@ export function SocialAuthFeature() {
     <View className="w-full gap-4 mt-2">
       {/* Divider */}
       <View className="flex-row items-center gap-5">
-        <View
-          className="flex-1 h-[1px]"
-          style={{
-            backgroundColor: isDark ? '#27272A' : '#E4E4E7',
-          }}
-        />
+        <View className={`flex-1 h-[1px] ${isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
 
-        <Text
-          className="font-bold text-[10px] uppercase tracking-[3px]"
-          style={{
-            color: isDark ? '#71717A' : '#A1A1AA',
-          }}
-        >
+        <Text className={`font-bold text-[10px] uppercase tracking-[3px] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
           {t('auth.or')}
         </Text>
 
-        <View
-          className="flex-1 h-[1px]"
-          style={{
-            backgroundColor: isDark ? '#27272A' : '#E4E4E7',
-          }}
-        />
+        <View className={`flex-1 h-[1px] ${isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
       </View>
 
       {/* Social Buttons */}

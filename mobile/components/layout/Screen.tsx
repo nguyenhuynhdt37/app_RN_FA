@@ -13,7 +13,6 @@ export function Screen({ children, safeArea, withTabBar, className, ...props }: 
   const content = (
     <View 
       className={cn("flex-1", className)} 
-      style={withTabBar ? { paddingBottom: 80 } : undefined}
       {...props}
     >
       {children}
@@ -23,7 +22,7 @@ export function Screen({ children, safeArea, withTabBar, className, ...props }: 
   return (
     <ScreenBackground>
       {safeArea ? (
-        <SafeAreaView className="flex-1">
+        <SafeAreaView className="flex-1" edges={['top']}>
           {content}
         </SafeAreaView>
       ) : (

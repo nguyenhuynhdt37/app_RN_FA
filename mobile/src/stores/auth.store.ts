@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import * as SecureStore from 'expo-secure-store'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { User, TokenResponse } from '../types/auth'
 import { authService } from '../services/auth.service'
 
@@ -17,7 +18,6 @@ interface AuthState {
   setUser: (user: User) => void
   setConnectionError: (v: boolean) => void
   logout: () => Promise<void>
-  bypassLogin: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -32,7 +32,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isLoading: true, connectionError: false })
       const token = await SecureStore.getItemAsync('access_token')
-      const cachedUser = await SecureStore.getItemAsync('cached_user')
+      const cachedUser = await AsyncStorage.getItem('cached_user')
       
       if (cachedUser) {
         set({ user: JSON.parse(cachedUser), isAuthenticated: !!token })
@@ -40,14 +40,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       if (!token) {
         set({ isLoading: false, isAuthenticated: false, user: null })
-        await SecureStore.deleteItemAsync('cached_user')
+        await AsyncStorage.removeItem('cached_user')
         return
       }
 
       // getMe() will trigger the interceptor if 401
       const { data } = await authService.getMe()
       set({ user: data, isAuthenticated: true, connectionError: false })
-      await SecureStore.setItemAsync('cached_user', JSON.stringify(data))
+      await AsyncStorage.setItem('cached_user', JSON.stringify(data))
     } catch (error: any) {
       // Check for timeout or network error
       const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout')
@@ -75,7 +75,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const { data } = await authService.getMe()
       set({ user: data, isAuthenticated: true })
-      await SecureStore.setItemAsync('cached_user', JSON.stringify(data))
+      await AsyncStorage.setItem('cached_user', JSON.stringify(data))
     } catch {
       set({ isAuthenticated: true })
     }
@@ -85,7 +85,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     await SecureStore.deleteItemAsync('access_token')
     await SecureStore.deleteItemAsync('refresh_token')
     await SecureStore.deleteItemAsync('session_id')
-    await SecureStore.deleteItemAsync('cached_user')
+    await AsyncStorage.removeItem('cached_user')
     set({ user: null, isAuthenticated: false })
   },
 
@@ -93,12 +93,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const { data } = await authService.getMe()
       set({ user: data })
-      await SecureStore.setItemAsync('cached_user', JSON.stringify(data))
+      await AsyncStorage.setItem('cached_user', JSON.stringify(data))
     } catch {}
   },
   setUser: (user: User) => {
     set({ user })
-    SecureStore.setItemAsync('cached_user', JSON.stringify(user))
+    AsyncStorage.setItem('cached_user', JSON.stringify(user))
   },
 
   logout: async () => {
@@ -109,21 +109,5 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     await get().clearTokens()
   },
 
-  bypassLogin: async () => {
-    set({
-      user: {
-        id: 'dev-123',
-        full_name: 'Developer Mode',
-        roles: ['USER'],
-        phone: '0912345678',
-        email: null,
-        avatar_url: null,
-        status: 'ACTIVE',
-        is_verified: true,
-        created_at: new Date().toISOString(),
-        last_login_at: new Date().toISOString()
-      },
-      isAuthenticated: true,
-    })
-  },
+
 }))

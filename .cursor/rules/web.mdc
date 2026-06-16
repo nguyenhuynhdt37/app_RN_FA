@@ -1,0 +1,404 @@
+---
+name: neuralearn-web
+description: Next.js 15 + Tailwind v4 conventions for NeuralEarn Web admin and public pages
+globs:
+  - "web/**/*.ts"
+  - "web/**/*.tsx"
+  - "web/**/*.js"
+  - "web/**/*.jsx"
+alwaysApply: false
+---
+
+# NeuralEarn Web Rules
+
+## Architecture
+
+### Feature-Sliced Design (FSD-Light)
+
+```
+web/src/
+├── app/[locale]/              # Next.js App Router pages
+│   ├── (admin)/              # Admin section
+│   │   ├── layout.tsx        # Server layout
+│   │   ├── layout-client.tsx # Client layout (sidebar state)
+│   │   ├── dashboard/
+│   │   ├── users/
+│   │   ├── courses/
+│   │   └── ...
+│   ├── login/
+│   │   └── page.tsx
+│   └── page.tsx              # Public home
+├── features/                   # ALL business logic lives here
+│   ├── admin-dashboard/
+│   │   ├── components/
+│   │   │   ├── DashboardView.tsx  # Root client component
+│   │   │   ├── StatCard.tsx
+│   │   │   ├── RevenueChart.tsx
+│   │   │   └── ...
+│   │   └── types.ts
+│   ├── admin-users/
+│   │   ├── components/
+│   │   │   ├── UsersView.tsx
+│   │   │   ├── UsersTable.tsx
+│   │   │   ├── UserFilters.tsx
+│   │   │   └── BanModal.tsx
+│   │   └── types.ts
+│   └── ...
+├── components/
+│   ├── admin/
+│   │   ├── sidebar.tsx
+│   │   └── header.tsx
+│   └── ui/                   # Shared UI primitives (future)
+├── lib/
+│   ├── auth-server.ts         # Server-side auth utilities
+│   └── utils.ts              # Utility functions
+├── hooks/
+├── store/
+│   ├── auth-store.ts
+│   └── lang-store.ts
+├── types/
+│   ├── admin.ts
+│   └── auth.ts
+└── constants/
+    └── languages.ts
+```
+
+### Golden Rules
+
+> **page.tsx là thin wrapper - KHÔNG chứa logic, KHÔNG chứa JSX phức tạp**
+> 
+> **Toàn bộ logic, state, components phải nằm trong features/**
+
+```tsx
+// ✅ CORRECT - Page is just an import
+import { DashboardView } from '@/features/admin-dashboard/components/DashboardView';
+
+export default function DashboardPage() {
+  return <DashboardView />;
+}
+
+// ❌ WRONG - Logic in page
+export default function DashboardPage() {
+  const [data, setData] = useState([]);
+  // 500 lines of logic...
+  return <div>...</div>;
+}
+```
+
+## Data Fetching Pattern
+
+### NO SWR - Use Server Components + useEffect
+
+```tsx
+// ✅ CORRECT - Fetch in Server Component
+// app/[locale]/(admin)/dashboard/page.tsx
+import { getDashboardStats } from '@/features/admin-dashboard/services/stats';
+
+export default async function DashboardPage() {
+  const stats = await getDashboardStats();
+  return <DashboardView initialStats={stats} />;
+}
+
+// features/admin-dashboard/components/DashboardView.tsx
+'use client';
+
+export function DashboardView({ initialStats }: { initialStats: Stats }) {
+  const [stats, setStats] = useState(initialStats);
+  
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/admin/stats', { signal: controller.signal })
+      .then(r => r.json())
+      .then(setStats)
+      .catch(e => { if (e.name !== 'AbortError') console.error(e); })
+      .finally(() => setLoading(false));
+    return () => controller.abort();
+  }, []);
+  
+  return <div>...</div>;
+}
+
+// ❌ WRONG - Using SWR or TanStack Query
+import useSWR from 'swr';
+const { data } = useSWR('/api/admin/stats');
+```
+
+### Server Actions for Mutations
+
+```tsx
+// ✅ CORRECT - Server Action
+'use server';
+
+export async function banUser(userId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    await db.user.update({ where: { id: userId }, data: { isBanned: true } });
+    revalidatePath('/(admin)/users');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: 'Failed to ban user' };
+  }
+}
+
+// ❌ WRONG - API route for mutation
+// Don't create /api/admin/users/ban - use server action instead
+```
+
+## Component Patterns
+
+### 1. Page Header Pattern
+
+```tsx
+import { Plus } from 'lucide-react';
+
+export function PageHeader({ 
+  title, 
+  subtitle, 
+  actionLabel 
+}: { 
+  title: string; 
+  subtitle: string; 
+  actionLabel: string; 
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <div>
+        <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          {title}
+        </h1>
+        <p className="text-slate-500 font-semibold mt-1">{subtitle}</p>
+      </div>
+      <button className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 text-white font-bold text-sm rounded-2xl hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 transition-all hover:scale-105 active:scale-95">
+        <Plus size={16} />
+        {actionLabel}
+      </button>
+    </div>
+  );
+}
+```
+
+### 2. Filter Bar Pattern
+
+```tsx
+import { Search } from 'lucide-react';
+
+export function FilterBar({ filters, onChange }: FilterBarProps) {
+  return (
+    <div className="premium-card">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Search Input */}
+        <div className="relative group">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+          <input 
+            className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/8 rounded-2xl text-sm font-semibold outline-none focus:border-emerald-400 transition-colors"
+            placeholder={t('admin.search')}
+          />
+        </div>
+        
+        {/* Select Filters */}
+        <select className="px-4 py-3 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/8 rounded-2xl text-sm font-semibold outline-none focus:border-emerald-400 transition-colors">
+          <option>{t('admin.allStatus')}</option>
+          <option>{t('admin.active')}</option>
+          <option>{t('admin.inactive')}</option>
+        </select>
+      </div>
+    </div>
+  );
+}
+```
+
+### 3. Data Table Pattern
+
+```tsx
+export function DataTable({ columns, data, onSort }: TableProps) {
+  return (
+    <div className="premium-card p-0 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-slate-100 dark:border-white/5">
+              {columns.map((col) => (
+                <th key={col.key} className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[2px]">
+                  {col.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50 dark:divide-white/3">
+            {data.map((row) => (
+              <tr key={row.id} className="hover:bg-slate-50/50 dark:hover:bg-white/2 transition-colors group">
+                {columns.map((col) => (
+                  <td key={col.key} className="px-6 py-4 text-sm">
+                    {col.render?.(row) ?? row[col.key]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+```
+
+### 4. Modal Pattern
+
+```tsx
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}
+
+export function Modal({ isOpen, onClose, children }: ModalProps) {
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-[#12131e] rounded-[28px] shadow-2xl w-full max-w-md p-8 border border-slate-100 dark:border-white/8">
+        {children}
+      </div>
+    </div>
+  );
+}
+```
+
+## Design Tokens
+
+### Colors
+
+```typescript
+const colors = {
+  primary: 'emerald-500',     // #10b981
+  sidebar: '#0b0c14',          // Dark sidebar
+  background: '#f8fafc',       // Light bg
+  card: {
+    light: 'white',
+    dark: 'slate-900',
+  },
+  danger: 'red-500',
+  warning: 'amber-500',
+  info: 'blue-500',
+};
+```
+
+### Typography
+
+```typescript
+const typography = {
+  font: 'Be Vietnam Pro',
+  pageTitle: 'text-3xl font-black tracking-tight',
+  sectionTitle: 'text-lg font-black',
+  label: 'text-[10px] font-black uppercase tracking-[2px] text-slate-400',
+  body: 'text-sm font-semibold',
+};
+```
+
+### Spacing & Radii
+
+```typescript
+const designTokens = {
+  card: 'rounded-[24px]',
+  button: 'rounded-2xl',
+  input: 'rounded-2xl',
+  nav: 'rounded-xl',
+  modal: 'rounded-[28px]',
+};
+```
+
+## Chart Pattern (Recharts)
+
+```tsx
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from 'recharts';
+
+// Line Chart
+export function RevenueChart({ data }: { data: ChartData[] }) {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+        <XAxis 
+          dataKey="name" 
+          tick={{ fontSize: 11, fill: '#94a3b8', fontWeight: 600 }} 
+          axisLine={false} 
+          tickLine={false} 
+        />
+        <YAxis 
+          tick={{ fontSize: 11, fill: '#94a3b8', fontWeight: 600 }} 
+          axisLine={false} 
+          tickLine={false} 
+        />
+        <Tooltip 
+          contentStyle={{ 
+            background: '#0f172a', 
+            border: 'none', 
+            borderRadius: 12, 
+            color: '#fff', 
+            fontSize: 12 
+          }} 
+        />
+        <Line 
+          type="monotone" 
+          dataKey="value" 
+          stroke="#10b981" 
+          strokeWidth={3} 
+          dot={{ 
+            fill: '#10b981', 
+            r: 4, 
+            strokeWidth: 2, 
+            stroke: '#fff' 
+          }} 
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}
+```
+
+## Internationalization (i18n)
+
+```tsx
+// ✅ CORRECT - Use next-intl
+import { getTranslations } from 'next-intl/server';
+
+export default async function UsersPage() {
+  const t = await getTranslations('admin.users');
+  
+  return (
+    <div>
+      <h1>{t('title')}</h1>
+      <button>{t('actions.ban')}</button>
+    </div>
+  );
+}
+
+// Client components
+'use client';
+import { useTranslations } from 'next-intl';
+
+export function UsersTable() {
+  const t = useTranslations('admin.users');
+  return <button>{t('actions.ban')}</button>;
+}
+```
+
+## NEVER DO
+
+1. **NO SWR** - Use `useState` + `useEffect` + `fetch`
+2. **NO plain colors** (`red`, `blue`) - Use Tailwind semantic
+3. **NO hardcoded colors inline** - Use Tailwind classes
+4. **NO colored icons** - Icons must be monochrome (slate/white/emerald)
+5. **NO logic in page.tsx** - Move to features/
+6. **NO missing dark mode** - Always add `dark:` variant
+
+---
+
+> Reference: `.agents/skills/neuralearn-admin-ui/SKILL.md`

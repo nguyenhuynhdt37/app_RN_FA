@@ -1,0 +1,298 @@
+---
+name: neuralearn-typescript
+description: TypeScript best practices for NeuralEarn project - strict typing, patterns, and conventions
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+alwaysApply: true
+---
+
+# NeuralEarn TypeScript Rules
+
+## Core Principles
+
+### 1. NO ANY - Use Unknown + Type Guards
+
+```typescript
+// ✅ CORRECT - Unknown with type guard
+function parseResponse(data: unknown): User {
+  if (isUser(data)) {
+    return data;
+  }
+  throw new Error('Invalid user data');
+}
+
+function isUser(data: unknown): data is User {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'id' in data &&
+    typeof (data as User).id === 'string'
+  );
+}
+
+// ❌ WRONG
+function parseResponse(data: any): User {
+  return data; // No type safety!
+}
+```
+
+### 2. Strict Type Annotations
+
+```typescript
+// ✅ CORRECT - Explicit return types
+async function getUserById(id: string): Promise<User | null> {
+  const response = await api.get(`/users/${id}`);
+  return response.data as User;
+}
+
+// ❌ WRONG - Implicit any
+async function getUserById(id) {
+  return await api.get(`/users/${id}`);
+}
+```
+
+### 3. Generic Constraints
+
+```typescript
+// ✅ CORRECT - Generic with constraint
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+const name = getProperty(user, 'name'); // string
+const age = getProperty(user, 'age');   // number
+
+// ❌ WRONG - Any type
+function getProperty(obj: any, key: string) {
+  return obj[key];
+}
+```
+
+## Type Patterns
+
+### 1. API Response Types
+
+```typescript
+// ✅ CORRECT - Typed API response
+interface ApiResponse<T> {
+  data: T;
+  message: string;
+  code: string;
+}
+
+interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+// Usage
+async function fetchUsers(page: number): Promise<PaginatedResponse<User>> {
+  const response = await api.get('/users', { params: { page } });
+  return response.data;
+}
+
+// ❌ WRONG - No type
+const data = await fetch('/api/users');
+```
+
+### 2. Form Types
+
+```typescript
+// ✅ CORRECT - Explicit form types
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
+interface RegisterForm extends LoginForm {
+  displayName: string;
+  confirmPassword: string;
+}
+
+// Validation
+function validateLoginForm(form: Partial<LoginForm>): string[] {
+  const errors: string[] = [];
+  if (!form.email) errors.push('Email is required');
+  if (form.password && form.password.length < 8) {
+    errors.push('Password must be at least 8 characters');
+  }
+  return errors;
+}
+
+// ❌ WRONG - Any
+function handleSubmit(formData: any) { ... }
+```
+
+### 3. Event Handler Types
+
+```typescript
+// ✅ CORRECT - Typed event handlers
+type ButtonProps = {
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onFocus?: (event: React.FocusEvent<HTMLButtonElement>) => void;
+};
+
+type InputProps = {
+  onChange: (value: string, event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+};
+
+// ❌ WRONG - Any event
+onChange={(e) => setValue(e.target.value)}
+```
+
+### 4. State Types
+
+```typescript
+// ✅ CORRECT - Explicit state types
+type FetchState<T> = {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+};
+
+function useFetch<T>(url: string): FetchState<T> {
+  const [state, setState] = useState<FetchState<T>>({
+    data: null,
+    loading: true,
+    error: null,
+  });
+  // ...
+  return state;
+}
+
+// ❌ WRONG - Implicit state
+const [data, setData] = useState();
+```
+
+## Utility Types
+
+### Commonly Used
+
+```typescript
+// Partial - for update forms
+type UserUpdate = Partial<User>;
+
+// Pick - for selecting specific fields
+type UserPreview = Pick<User, 'id' | 'name' | 'avatarUrl'>;
+
+// Omit - for excluding fields
+type CreateUserPayload = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
+
+// Record - for mapping
+type Status = 'pending' | 'active' | 'banned';
+const statusLabels: Record<Status, string> = {
+  pending: 'Đang chờ',
+  active: 'Hoạt động',
+  banned: 'Bị cấm',
+};
+
+// Union types for variants
+type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+interface ButtonProps {
+  variant: ButtonVariant;
+  size: ButtonSize;
+}
+```
+
+## Type Safety Checklist
+
+- [ ] All function parameters typed
+- [ ] All function return values typed
+- [ ] No `any` types
+- [ ] No non-null assertions (`!`) without justification
+- [ ] Use `undefined` vs `null` consistently
+- [ ] Props interfaces defined for all components
+- [ ] API response types defined
+
+## Common Patterns
+
+### Optional Chaining + Nullish Coalescing
+
+```typescript
+// ✅ CORRECT
+const userName = user?.profile?.name ?? 'Anonymous';
+const itemCount = items?.length ?? 0;
+
+// ❌ WRONG
+const userName = user && user.profile && user.profile.name || 'Anonymous';
+```
+
+### Discriminated Unions
+
+```typescript
+// ✅ CORRECT - Type-safe state machine
+type FetchState<T> = 
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: T }
+  | { status: 'error'; error: string };
+
+function renderState<T>(state: FetchState<T>) {
+  switch (state.status) {
+    case 'idle': return <Empty />;
+    case 'loading': return <Spinner />;
+    case 'success': return <Data data={state.data} />; // T is inferred
+    case 'error': return <Error message={state.error} />;
+  }
+}
+
+// ❌ WRONG - Union without discriminant
+type BadState = {
+  data?: T;
+  loading: boolean;
+  error?: string;
+  // What if loading=true AND data exists?
+}
+```
+
+### Branded Types (for IDs)
+
+```typescript
+// ✅ CORRECT - Prevent mixing up userId vs courseId
+type Brand<T, B> = T & { __brand: B };
+type UserId = Brand<string, 'UserId'>;
+type CourseId = Brand<string, 'CourseId'>;
+
+function getUser(userId: UserId): Promise<User> { ... }
+function getCourse(courseId: CourseId): Promise<Course> { ... }
+
+const userId = '123' as UserId;
+const courseId = '456' as CourseId;
+
+getUser(userId);   // ✅ OK
+getCourse(courseId); // ✅ OK
+getUser(courseId);  // ❌ Type error!
+```
+
+## Linting
+
+Use TypeScript strict mode:
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}
+```
+
+---
+
+> TypeScript is the best language for large-scale applications. Use it wisely!

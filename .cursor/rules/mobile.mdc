@@ -1,0 +1,466 @@
+---
+name: neuralearn-mobile
+description: React Native + Expo + Tailwind CSS conventions for NeuralEarn Mobile app
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+alwaysApply: true
+---
+
+# NeuralEarn Mobile Rules
+
+## MANDATORY: Tailwind CSS
+
+**Tất cả styles PHẢI sử dụng Tailwind CSS (NativeWind)**
+
+```tsx
+// ✅ CORRECT - Tailwind only
+<View className="flex-1 bg-white dark:bg-zinc-900 px-4 py-6">
+  <Text className="text-emerald-500 font-bold text-lg">Hello</Text>
+</View>
+
+// ❌ WRONG - StyleSheet.create with inline styles
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff' },
+  text: { color: '#10b981' },
+});
+<View style={styles.container}>
+  <Text style={styles.text}>Hello</Text>
+</View>
+```
+
+### Tailwind Extensions cho Mobile
+
+```tsx
+// Thêm vào tailwind.config.js cho design system
+module.exports = {
+  theme: {
+    extend: {
+      borderRadius: {
+        'pill': '9999px',
+        'card': '48px',
+        'modal': '28px',
+      },
+      colors: {
+        emerald: {
+          500: '#10b981', // Primary
+        },
+      },
+      fontFamily: {
+        'vietnam': ['BeVietnamPro'],
+      },
+    },
+  },
+};
+```
+
+### Animation Classes
+
+```tsx
+// ✅ CORRECT - NativeWind + Reanimated
+<Animated.View
+  entering={FadeIn.duration(300)}
+  exiting={FadeOut.duration(200)}
+  className="bg-white rounded-[48px] p-6"
+>
+  <Text className="text-emerald-500">Content</Text>
+</Animated.View>
+
+// ❌ WRONG - Inline Animated style
+<Animated.View style={{ backgroundColor: '#fff', borderRadius: 48 }}>
+```
+
+## Design System - MANDATORY
+
+### Color Palette (Emerald Monochromatic)
+
+```typescript
+const colors = {
+  // Primary
+  emerald: {
+    50: '#ecfdf5',
+    100: '#d1fae5',
+    200: '#a7f3d0',
+    300: '#6ee7b7',
+    400: '#34d399',
+    500: '#10b981', // MAIN ACCENT
+    600: '#059669',
+    700: '#047857',
+    800: '#065f46',
+    900: '#064e3b',
+  },
+  // Neutrals
+  zinc: { /* ... */ },
+  // Semantic
+  success: '#10b981',
+  warning: '#f59e0b',
+  error: '#ef4444',
+  info: '#3b82f6',
+};
+```
+
+### Typography
+
+```typescript
+// Font: Be Vietnam Pro
+const typography = {
+  heading: {
+    fontFamily: 'BeVietnamPro-Black',
+    fontSize: 28,
+    lineHeight: 34,
+    letterSpacing: -0.5,
+  },
+  subheading: {
+    fontFamily: 'BeVietnamPro-Bold',
+    fontSize: 20,
+    lineHeight: 26,
+  },
+  body: {
+    fontFamily: 'BeVietnamPro-Regular',
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  caption: {
+    fontFamily: 'BeVietnamPro-Medium',
+    fontSize: 12,
+    lineHeight: 16,
+  },
+};
+```
+
+## Component Architecture
+
+### Directory Structure
+
+```
+mobile/
+├── app/                          # Navigation screens (file-based routing)
+│   ├── (app)/                   # Authenticated routes
+│   │   ├── (tabs)/
+│   │   │   ├── _layout.tsx      # Tab navigator
+│   │   │   ├── index.tsx        # Home tab
+│   │   │   ├── explore.tsx      # Explore tab
+│   │   │   ├── courses.tsx      # My courses tab
+│   │   │   └── profile.tsx      # Profile tab
+│   │   └── settings/
+│   │       └── language.tsx
+│   ├── (auth)/                  # Auth routes
+│   │   ├── login.tsx
+│   │   ├── register.tsx
+│   │   └── onboarding.tsx
+│   ├── _layout.tsx              # Root layout
+│   └── demo.tsx
+├── components/
+│   ├── features/                # Feature-specific components
+│   │   ├── auth/
+│   │   │   ├── OnboardingFeature.tsx
+│   │   │   ├── PhoneFeature.tsx
+│   │   │   ├── VerifyOTPFeature.tsx
+│   │   │   └── SocialAuthFeature.tsx
+│   │   ├── home/
+│   │   │   └── HomeHeader.tsx
+│   │   └── profile/
+│   │       ├── ProfileFeature.tsx
+│   │       ├── SettingsFeature.tsx
+│   │       └── components/
+│   │           ├── ProfileHeader.tsx
+│   │           ├── ProfileStats.tsx
+│   │           ├── ProfileAbout.tsx
+│   │           ├── ProfileExpertise.tsx
+│   │           └── edit-form/
+│   │               ├── BasicInfoSection.tsx
+│   │               ├── EducationSection.tsx
+│   │               ├── SkillsInterestsSection.tsx
+│   │               └── GoalsSection.tsx
+│   ├── layout/
+│   │   └── Screen.tsx          # Screen wrapper
+│   └── ui/                     # Atomic components (future)
+├── src/
+│   ├── services/
+│   │   ├── api.ts              # Axios instance
+│   │   └── auth.service.ts
+│   ├── stores/
+│   │   ├── auth.store.ts       # Zustand store
+│   │   └── theme.store.ts
+│   ├── types/
+│   │   └── auth.ts
+│   └── utils/
+│       └── image.ts
+└── assets/
+    ├── images/
+    ├── fonts/
+    └── animations/
+```
+
+### Component File Limit
+
+```
+⚠️ MAXIMUM 150 LINES PER FILE
+```
+
+Nếu component vượt quá 150 lines, hãy tách thành:
+- Sub-components trong thư mục `components/`
+- Logic vào custom hooks trong `src/hooks/`
+- Constants vào `src/constants/`
+
+## Coding Standards
+
+### 1. Screen Component Pattern
+
+```tsx
+// ✅ CORRECT - Clean screen
+export default function HomeScreen() {
+  return (
+    <Screen>
+      <HomeHeader />
+      <FeaturedCourses />
+      <Categories />
+    </Screen>
+  );
+}
+
+// ❌ WRONG - Logic in screen
+export default function HomeScreen() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  // 200 lines of logic...
+}
+```
+
+### 2. Feature Component Pattern
+
+```tsx
+// ✅ CORRECT - Self-contained feature
+export function AuthFeature() {
+  const [step, setStep] = useState<AuthStep>('phone');
+  
+  const handlePhoneSubmit = async (phone: string) => {
+    await authService.sendOTP(phone);
+    setStep('otp');
+  };
+  
+  return (
+    <Animated.View entering={FadeIn} exiting={FadeOut}>
+      {step === 'phone' && <PhoneInput onSubmit={handlePhoneSubmit} />}
+      {step === 'otp' && <OTPInput phone={phone} />}
+    </Animated.View>
+  );
+}
+```
+
+### 3. Type Definitions
+
+```typescript
+// ✅ CORRECT - Explicit types
+interface User {
+  id: string;
+  email: string;
+  displayName: string;
+  avatarUrl: string | null;
+  role: 'student' | 'instructor' | 'admin';
+  createdAt: Date;
+}
+
+// ❌ WRONG - any or implicit any
+const user: any = response.data;
+```
+
+### 4. State Management (Zustand)
+
+```typescript
+// ✅ CORRECT
+interface AuthState {
+  user: User | null;
+  accessToken: string | null;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  accessToken: null,
+  isAuthenticated: false,
+  
+  login: async (email, password) => {
+    const response = await authService.login(email, password);
+    set({
+      user: response.user,
+      accessToken: response.accessToken,
+      isAuthenticated: true,
+    });
+  },
+  
+  logout: () => set({ user: null, accessToken: null, isAuthenticated: false }),
+}));
+
+// ❌ WRONG - Multiple useState for auth
+const [user, setUser] = useState(null);
+const [token, setToken] = useState(null);
+const [loading, setLoading] = useState(false);
+```
+
+### 5. API Service Pattern
+
+```typescript
+// ✅ CORRECT - Centralized API service
+import axios from 'axios';
+import { useAuthStore } from '../stores/auth.store';
+
+const api = axios.create({
+  baseURL: process.env.EXPO_PUBLIC_API_URL,
+  timeout: 10000,
+});
+
+api.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().accessToken;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export const authService = {
+  login: (email: string, password: string) => 
+    api.post('/auth/login', { email, password }),
+  register: (data: RegisterData) => 
+    api.post('/auth/register', data),
+  refreshToken: () => 
+    api.post('/auth/refresh'),
+};
+```
+
+## UI/UX Rules
+
+### 1. Screen Wrapper
+
+```tsx
+// ✅ ALWAYS use Screen wrapper
+import { Screen } from '@/components/layout/Screen';
+
+export default function ProfileScreen() {
+  return (
+    <Screen>
+      <ProfileHeader />
+      <ProfileContent />
+    </Screen>
+  );
+}
+```
+
+### 2. Bilingual Text
+
+```tsx
+// ✅ CORRECT - i18n
+import { useTranslation } from 'react-i18next';
+
+export function ProfileScreen() {
+  const { t } = useTranslation();
+  
+  return (
+    <Text style={typography.heading}>
+      {t('profile.title')}
+    </Text>
+  );
+}
+
+// ❌ WRONG - hardcoded text
+<Text>My Profile</Text>
+```
+
+### 3. Error Handling
+
+```typescript
+// ✅ CORRECT - Error codes
+try {
+  await authService.login(email, password);
+} catch (error: unknown) {
+  if (error instanceof ApiError) {
+    switch (error.code) {
+      case 'INVALID_CREDENTIALS':
+        showToast(t('errors.invalidCredentials'));
+        break;
+      case 'ACCOUNT_LOCKED':
+        showToast(t('errors.accountLocked'));
+        break;
+    }
+  }
+}
+
+// ❌ WRONG - raw message
+showToast('Invalid email or password');
+```
+
+## Animation Rules
+
+### Spring Physics (MUST USE)
+
+```tsx
+import Animated, { 
+  useAnimatedStyle, 
+  useSharedValue, 
+  withSpring 
+} from 'react-native-reanimated';
+
+// ✅ CORRECT
+const scale = useSharedValue(1);
+
+const animatedStyle = useAnimatedStyle(() => ({
+  transform: [{ scale: scale.value }],
+}));
+
+const handlePressIn = () => {
+  scale.value = withSpring(0.98, { damping: 15, stiffness: 150 });
+};
+
+const handlePressOut = () => {
+  scale.value = withSpring(1, { damping: 15, stiffness: 150 });
+};
+
+// ❌ WRONG - timing-based animation
+Animated.timing(scale, {
+  toValue: 0.98,
+  duration: 200,
+  easing: Easing.ease,
+}).start();
+```
+
+## Image Handling
+
+```typescript
+// ✅ CORRECT - CDN images with optimization
+import { Image } from 'expo-image';
+import { CLOUDINARY_CDN_URL } from '@/src/constants';
+
+interface Props {
+  imageUrl: string | null;
+  size?: number;
+}
+
+export function Avatar({ imageUrl, size = 48 }: Props) {
+  const optimizedUrl = imageUrl 
+    ? `${CLOUDINARY_CDN_URL}/w_${size},h_${size},c_fill,f_auto/${imageUrl}`
+    : null;
+    
+  return (
+    <Image
+      source={{ uri: optimizedUrl }}
+      style={{ width: size, height: size, borderRadius: size / 2 }}
+      contentFit="cover"
+    />
+  );
+}
+```
+
+## Performance Checklist
+
+- [ ] Images optimized (WebP, CDN)
+- [ ] List items using `FlashList` or optimized FlatList
+- [ ] Lazy loading for heavy components
+- [ ] No inline styles in render (use StyleSheet)
+- [ ] Memoized callbacks with `useCallback`
+- [ ] Memoized values with `useMemo`
+
+---
+
+> Reference: `.agents/skills/modern-ui-2026/SKILL.md`

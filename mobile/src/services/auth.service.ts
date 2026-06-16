@@ -56,6 +56,7 @@ export const authService = {
     preferred_learning_style?: string
     email?: string
     avatar_url?: string
+    cover_url?: string
     social_links?: Record<string, string>
   }) => api.patch<User>('/auth/profile', data),
 
@@ -73,6 +74,26 @@ export const authService = {
     })
 
     return api.post<{ avatar_url: string }>('/auth/avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
+
+  uploadCover: (fileUri: string) => {
+    const formData = new FormData()
+    const filename = fileUri.split('/').pop() || 'cover.jpg'
+    const match = /\.(\w+)$/.exec(filename)
+    const type = match ? `image/${match[1]}` : `image`
+
+    // @ts-ignore
+    formData.append('file', {
+      uri: fileUri,
+      name: filename,
+      type,
+    })
+
+    return api.post<{ cover_url: string }>('/auth/cover', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

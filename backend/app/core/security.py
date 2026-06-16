@@ -35,6 +35,7 @@ def create_access_token(
     subject: str | Any,
     expires_delta: timedelta | None = None,
     session_id: str | None = None,
+    roles: list[str] | None = None,
 ) -> str:
     expire = datetime.now(timezone.utc) + (
         expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -42,6 +43,8 @@ def create_access_token(
     payload: dict[str, Any] = {"sub": str(subject), "exp": expire, "type": "access"}
     if session_id:
         payload["sid"] = session_id      # session_id — dùng để identify thiết bị
+    if roles is not None:
+        payload["roles"] = roles
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 

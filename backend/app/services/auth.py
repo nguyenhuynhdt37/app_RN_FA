@@ -46,6 +46,7 @@ from app.models.database import (
 )
 from app.schemas.auth import (
     AuthenticateRequest,
+    PasswordLoginRequest,
     TokenResponse,
     UserPublicResponse,
     UpdateProfileRequest,
@@ -112,7 +113,6 @@ class AuthService:
                 user = Users(**user_data)
                 self._db.add(user)
                 await self._db.flush()
-                await self._assign_default_role(user.id, "customer")
                 is_new_user = True
                 logger.info("auth.upsert_register", user_id=str(user.id), identifier=identifier)
             else:
@@ -139,6 +139,57 @@ class AuthService:
             await self._db.rollback()
             logger.error(f"Error in authenticate_otp: {str(e)}", exc_info=True)
             raise HTTPException(status_code=500, detail="Internal server error during authentication")
+
+    async def authenticate_password(
+        self,
+        payload: PasswordLoginRequest,
+        request: Request | None = None,
+    ) -> TokenResponse:
+        """
+        Đăng nhập bằng email + password (dành cho Admin/Staff).
+        - Kiểm tra tài khoản tồn tại
+        - Xác thực mật khẩu
+        - Kiểm tra quyền (phải có 1 trong các quyền Admin/Staff)
+        """
+        email = normalize_identifier(payload.email)
+        user = await self._get_user_by_email(email)
+        
+        if not user or not user.password_hash:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={"code": "INVALID_CREDENTIALS", "message": "Email hoặc mật khẩu không chính xác."}
+            )
+
+        if not verify_password(payload.password, user.password_hash):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={"code": "INVALID_CREDENTIALS", "message": "Email hoặc mật khẩu không chính xác."}
+            )
+
+        self._assert_user_active(user)
+
+        # ROLE CHECK: Chỉ cho phép các quyền Admin/Staff vào
+        roles = await self._get_user_roles(user.id)
+        allowed_admin_roles = ["admin", "moderator", "support", "finance"]
+        
+        if not any(role in allowed_admin_roles for role in roles):
+            logger.warning(f"Unauthorized admin access attempt: user={email}, roles={roles}")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={"code": "ACCESS_DENIED", "message": "Tài khoản của bạn không có quyền truy cập hệ thống quản trị."}
+            )
+
+        await self._update_last_login(user.id)
+        await self._db.commit()
+
+        return await self._create_session_tokens(
+            user=user,
+            device_type=payload.device_type,
+            device_name=payload.device_name,
+            device_token=None,
+            ip_address=self._get_ip(request),
+            user_agent=self._get_ua(request),
+        )
 
     # ─── Refresh Token ────────────────────────────────────────────────────────
 
@@ -196,7 +247,8 @@ class AuthService:
             self._db.add(new_session)
             await self._db.commit()
 
-            access_token = create_access_token(str(user.id), session_id=str(new_session.id))
+            roles = await self._get_user_roles(user.id)
+            access_token = create_access_token(str(user.id), session_id=str(new_session.id), roles=roles)
             return TokenResponse(
                 access_token=access_token,
                 refresh_token=new_raw,
@@ -285,7 +337,8 @@ class AuthService:
                     name_vi=s.specialization.name_vi,
                     level=s.level,
                     level_label=s.level, # Frontend will translate the key
-                    skills=skill_names
+                    skills=skill_names,
+                    skill_ids=skill_ids
                 ))
 
             # Map Interests
@@ -320,6 +373,7 @@ class AuthService:
                 preferred_learning_style=user.preferred_learning_style,
                 social_links=user.social_links if user.social_links else {},
                 avatar_url=user.avatar_url,
+                cover_url=user.cover_url,
                 status=user.status.value if hasattr(user.status, "value") else user.status,
                 is_verified=user.is_verified,
                 date_of_birth=user.date_of_birth,
@@ -344,6 +398,7 @@ class AuthService:
             return UserProfileSummaryResponse(
                 full_name=user.full_name,
                 avatar_url=user.avatar_url,
+                cover_url=user.cover_url,
                 username=user.username
             )
         except HTTPException:
@@ -405,6 +460,13 @@ class AuthService:
                 user.email = payload.email
             if payload.avatar_url:
                 user.avatar_url = payload.avatar_url
+            if payload.cover_url:
+                user.cover_url = payload.cover_url
+
+            # Assign student role upon profile completion if they don't have it
+            current_roles = await self._get_user_roles(user_id)
+            if "student" not in current_roles:
+                await self._assign_default_role(user_id, "student")
 
             await self._db.commit()
             await self._db.refresh(user)
@@ -416,6 +478,34 @@ class AuthService:
             await self._db.rollback()
             logger.error(f"Error in update_profile: {str(e)}", exc_info=True)
             raise HTTPException(status_code=500, detail="Internal server error updating profile")
+            
+    async def update_avatar_url(self, user_id: uuid.UUID, avatar_url: str) -> None:
+        """Update user avatar URL in the database."""
+        try:
+            await self._db.execute(
+                update(Users)
+                .where(Users.id == user_id)
+                .values(avatar_url=avatar_url)
+            )
+            await self._db.commit()
+        except Exception as e:
+            await self._db.rollback()
+            logger.error(f"Error updating avatar_url: {str(e)}", exc_info=True)
+            raise HTTPException(status_code=500, detail="Error updating database with new avatar")
+
+    async def update_cover_url(self, user_id: uuid.UUID, cover_url: str) -> None:
+        """Update user cover URL in the database."""
+        try:
+            await self._db.execute(
+                update(Users)
+                .where(Users.id == user_id)
+                .values(cover_url=cover_url)
+            )
+            await self._db.commit()
+        except Exception as e:
+            await self._db.rollback()
+            logger.error(f"Error updating cover_url: {str(e)}", exc_info=True)
+            raise HTTPException(status_code=500, detail="Error updating database with new cover")
 
     # ─── Shared Session Creator ───────────────────────────────────────────────
 
@@ -454,7 +544,8 @@ class AuthService:
         self._db.add(session)
         await self._db.commit()
 
-        access_token = create_access_token(str(user.id), session_id=str(session.id))
+        roles = await self._get_user_roles(user.id)
+        access_token = create_access_token(str(user.id), session_id=str(session.id), roles=roles)
         return TokenResponse(
             access_token=access_token,
             refresh_token=raw_refresh,

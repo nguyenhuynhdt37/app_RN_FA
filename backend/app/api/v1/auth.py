@@ -22,6 +22,7 @@ from app.core.config import settings
 from app.core.logging import logger
 from app.schemas.auth import (
     AuthenticateRequest,
+    PasswordLoginRequest,
     RefreshTokenRequest,
     SendOtpRequest,
     TokenResponse,
@@ -30,6 +31,7 @@ from app.schemas.auth import (
     VerifyOtpRequest,
     VerifyOtpResponse,
     AvatarUploadResponse,
+    CoverUploadResponse,
     UserProfileSummaryResponse,
 )
 from app.services.auth import AuthService
@@ -140,6 +142,41 @@ async def authenticate_by_otp(
         raise
     except Exception as e:
         logger.error(f"Error in authenticate_by_otp: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@router.post(
+    "/login/password",
+    response_model=TokenResponse,
+    summary="Đăng nhập bằng email + mật khẩu (Admin/Staff)",
+)
+async def login_by_password(
+    payload: PasswordLoginRequest,
+    request: Request,
+    response: Response,
+    db: DBSession
+):
+    """
+    Đăng nhập truyền thống cho hệ thống quản trị.
+    - Chỉ cho phép các tài khoản có quyền Admin/Staff.
+    - Trả về token + set cookies.
+    """
+    try:
+        service = AuthService(db)
+        tokens = await service.authenticate_password(payload, request=request)
+        
+        # Set cookies cho Web client
+        set_auth_cookies(
+            response=response, 
+            access_token=tokens.access_token, 
+            refresh_token=tokens.refresh_token
+        )
+        
+        return tokens
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in login_by_password: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -303,12 +340,12 @@ async def update_profile(
 
 @router.post("/avatar", response_model=AvatarUploadResponse, status_code=status.HTTP_200_OK)
 async def upload_avatar(
+    current_user_id: CurrentUserID,
+    db: DBSession,
     file: UploadFile = File(...),
 ) -> AvatarUploadResponse:
-    """Upload user avatar and return path."""
-    storage = StorageService()
-    
-    # Kiểm tra loại file
+    """Upload user avatar and link it to the user record."""
+    # 1. Validation
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -316,9 +353,44 @@ async def upload_avatar(
         )
 
     try:
+        storage = StorageService()
+        auth_service = AuthService(db)
+        
+        # 2. Upload file
         url = await storage.upload_avatar(file)
+        
+        # 3. Persist to DB immediately
+        await auth_service.update_avatar_url(current_user_id, url)
+        
         return AvatarUploadResponse(avatar_url=url)
     except Exception as e:
+        logger.error(f"Avatar upload failed for user {current_user_id}: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"code": "UPLOAD_FAILED", "message": f"Upload thất bại: {str(e)}"}
+        )
+
+@router.post("/cover", response_model=CoverUploadResponse, status_code=status.HTTP_200_OK)
+async def upload_cover(
+    current_user_id: CurrentUserID,
+    db: DBSession,
+    file: UploadFile = File(...),
+) -> CoverUploadResponse:
+    """Upload user profile cover and link it to the user record."""
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"code": "INVALID_FILE_TYPE", "message": "Chỉ chấp nhận file ảnh."}
+        )
+
+    try:
+        storage = StorageService()
+        auth_service = AuthService(db)
+        url = await storage.upload_cover(file)
+        await auth_service.update_cover_url(current_user_id, url)
+        return CoverUploadResponse(cover_url=url)
+    except Exception as e:
+        logger.error(f"Cover upload failed for user {current_user_id}: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={"code": "UPLOAD_FAILED", "message": f"Upload thất bại: {str(e)}"}

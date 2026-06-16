@@ -56,7 +56,7 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
           router.replace('/(app)');
         }
       }
-    } else if (!inAuthGroup) {
+    } else if (!inAuthGroup && segments[0] !== 'demo') {
       router.replace('/(auth)/onboarding');
     }
   }, [isAuthenticated, user?.is_profile_completed, isLoading, segments, rootNavigationState?.key]);
@@ -68,7 +68,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NetworkErrorScreen } from '../components/ui/NetworkErrorScreen';
 import { NetworkMonitor } from '../components/layout/NetworkMonitor';
 
+import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
+
 export default function RootLayout() {
+  const { setColorScheme } = useNativeWindColorScheme();
   const [fontsLoaded] = useFonts({
     'BeVietnamPro-Regular': BeVietnamPro_400Regular,
     'BeVietnamPro-Medium': BeVietnamPro_500Medium,
@@ -88,6 +91,11 @@ export default function RootLayout() {
   useEffect(() => {
     initialize();
   }, []);
+
+  useEffect(() => {
+    // Sync NativeWind colorScheme with our store/system
+    setColorScheme(colorScheme);
+  }, [colorScheme]);
 
   useEffect(() => {
     if (fontsLoaded && !isLoading) {
